@@ -4,7 +4,6 @@ import {
 	Box,
 	FormControl,
 	FormControlLabel,
-	FormLabel,
 	Switch,
 	TextField,
 	Button,
@@ -153,43 +152,9 @@ const FindingDetails = () => {
 		}
 	}
 
-	const VerbeteringFinding = (finding: Finding, index: number) => {
-		const keyValue = finding._id ? finding._id.toString() : index
-		return <><FormControl component="fieldset" key={keyValue} fullWidth>
-			<Box
-				display="flex"
-				flexDirection="row"
-				alignItems="center"
-				justifyContent="space-between"
-				width="100%"
-			>
-				<FormLabel>{finding.description}</FormLabel>
-				{finding.theme && <Chip label={finding.theme} size="small" />}
-			</Box>
-			<FormControlLabel key={keyValue}
-				control={
-					<Switch
-						checked={false}
-						name={finding.description}
-						color="primary"
-					/>
-				}
-				label={finding.description}
-			/></FormControl>
-			<TextField
-				label="Opmerkingen"
-				InputLabelProps={{
-					shrink: true,
-				}}
-				fullWidth
-				multiline
-				value={''}
-			/>
-		</>
-	}
 
-	const OpenFinding = (finding: Finding, index: number) => {
-		const keyValue = finding._id ? finding._id.toString() : index
+
+	const VerbeteringFinding = (finding: Finding) => {
 		return <Box
 			display="flex"
 			flexDirection="row"
@@ -197,30 +162,41 @@ const FindingDetails = () => {
 			justifyContent="space-between"
 			width="100%"
 		>
-			<TextField
-				key={keyValue}
-				label={finding.description}
-				value={''}
-				fullWidth
-				multiline
-				rows={4}
-				variant="outlined"
-			/>
+			<Box>
+				<Typography>{finding.description}</Typography>
+			</Box>
 			{finding.theme && <Box ml={2}>
 				<Chip label={finding.theme} size="small" />
 			</Box>}
 		</Box>
 	}
 
-	const FindingComponent = (finding: Finding, index: number) => {
+	const OpenFinding = (finding: Finding) => {
+		return <Box
+			display="flex"
+			flexDirection="row"
+			alignItems="top"
+			justifyContent="space-between"
+			width="100%"
+		>
+			<Box>
+				<Typography>{finding.description}</Typography>
+			</Box>
+			{finding.theme && <Box ml={2}>
+				<Chip label={finding.theme} size="small" />
+			</Box>}
+		</Box>
+	}
+
+	const FindingComponent = (finding: Finding) => {
 		switch (finding.type) {
 
 			case FindingType.Bug: {
-				return OpenFinding(finding, index)
+				return OpenFinding(finding)
 			}
 
 			case FindingType.Verbetering: {
-				return VerbeteringFinding(finding, index)
+				return VerbeteringFinding(finding)
 			}
 
 			default:
@@ -464,7 +440,7 @@ const FindingDetails = () => {
 						width="100%"
 						pb={5}
 					>
-						{FindingComponent(finding, 0)}
+						{FindingComponent(finding)}
 					</Box> : null}
 			</Box>
 		</Box>

@@ -28,7 +28,7 @@ const Framework: React.FC<IProps> = ({ children }) => {
       <Box
         display={(desktop || menu) ? 'flex' : 'none'}
         flexDirection="column"
-        borderRight={!desktop ? 'none' : '1px solid green'}
+        borderRight={!desktop ? 'none' : '1px solid grey'}
         alignItems="flex-start"
         justifyContent="flex-start"
         p={2}
