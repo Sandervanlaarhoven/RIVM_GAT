@@ -18,7 +18,7 @@ import BugReportIcon from '@material-ui/icons/BugReport'
 import MailOutlineIcon from '@material-ui/icons/MailOutline'
 import { useSnackbar } from 'notistack'
 
-import { Finding, FindingTheme, FindingType, QuestionFieldName } from '../../types'
+import { Finding, FindingTheme, FindingType, FindingFieldName } from '../../types'
 import { useRealmApp } from '../App/RealmApp'
 import { useHistory } from 'react-router-dom'
 import { BSON } from 'realm-web'
@@ -184,7 +184,7 @@ const ManageFindings: React.FC<IProps> = () => {
 		value: unknown
 	}
 
-	const handleChangeSelect = (event: React.ChangeEvent<selectEventProps>, fieldName: QuestionFieldName) => {
+	const handleChangeSelect = (event: React.ChangeEvent<selectEventProps>, fieldName: FindingFieldName) => {
 		setPropsFilter({
 			...propsFilter,
 			[fieldName]: event.target.value
@@ -273,7 +273,7 @@ const ManageFindings: React.FC<IProps> = () => {
 								labelId="type"
 								id="type"
 								value={propsFilter.theme || ''}
-								onChange={(event) => handleChangeSelect(event, QuestionFieldName.questionTheme)}
+								onChange={(event) => handleChangeSelect(event, FindingFieldName.findingTheme)}
 							>
 								<MenuItem key="" value={''}>Geen specifiek thema</MenuItem>
 								{findingThemes.map((findingTheme) => <MenuItem key={findingTheme.name} value={findingTheme.name}>{findingTheme.name}</MenuItem>)}

@@ -15,25 +15,6 @@ export type User = {
 	email: string
 }
 
-export enum QuestionType {
-	Radio = 'radio',
-	Boolean = 'boolean',
-	Open = 'open',
-}
-
-export type QuestionTheme = {
-	_id?: BSON.ObjectId;
-	name: string;
-}
-
-export type Question = {
-	_id?: BSON.ObjectId;
-	description: string;
-	options?: Array<string>;
-	type: QuestionType;
-	theme?: string;
-}
-
 export type FindingTheme = {
 	_id?: BSON.ObjectId;
 	name: string;
@@ -51,52 +32,8 @@ export type Finding = {
 	theme?: string;
 }
 
-export type EnrichedOption = {
-	description: string;
-	count: number;
-}
-
-export type AnswerForEnrichedQuestion = {
-	answer?: string;
-	remark?: string;
-	entryID?: BSON.ObjectId;
-}
-
-export type EnrichedQuestion = {
-	_id?: BSON.ObjectId;
-	description: string;
-	options?: Array<EnrichedOption>;
-	trueCount?: number;
-	falseCount?: number;
-	type: QuestionType;
-	answers: AnswerForEnrichedQuestion[];
-}
-
-export type Survey = {
-	_id?: BSON.ObjectId;
-	active: boolean;
-	anonymous?: boolean;
-	description: string;
-	name: string;
-	questions: Array<BSON.ObjectId>;
-}
-
-export type Answer = {
-	answer?: string;
-	remark?: string;
-	question: Question;
-};
-
-export type Entry = {
-	_id?: BSON.ObjectId;
-	answers: Array<Answer>;
-	survey: Survey;
-	user?: User;
-	datetime: number;
-}
-
-export enum QuestionFieldName {
+export enum FindingFieldName {
 	description = 'description',
 	type = 'type',
-	questionTheme = 'theme',
+	findingTheme = 'theme',
 }

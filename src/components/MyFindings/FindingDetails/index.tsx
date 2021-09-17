@@ -152,8 +152,6 @@ const FindingDetails = () => {
 		}
 	}
 
-
-
 	const VerbeteringFinding = (finding: Finding) => {
 		return <Box
 			display="flex"

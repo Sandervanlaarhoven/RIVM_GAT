@@ -1,28 +1,28 @@
 import React, { useEffect } from 'react'
 
 import { useRealmApp } from '../../App/RealmApp'
-import { addQuestion, deleteQuestion } from '../../../redux/questions/questionsSlice'
+import { addFinding, deleteFinding } from '../../../redux/findings/findingsSlice'
 import { useDispatch } from 'react-redux'
 
 
 const CollectionWatches = () => {
 	const app = useRealmApp()
 	const mongo = app.currentUser.mongoClient("mongodb-atlas")
-	const mongoQuestionsCollection = mongo.db("RIVM_GAT").collection("questions")
+	const mongoFindingsCollection = mongo.db("RIVM_GAT").collection("findings")
 
 	let dispatch = useDispatch()
 
-	const watchChangesOnQuestions = async () => {
-		for await (const change of mongoQuestionsCollection.watch()) {
+	const watchChangesOnFindings = async () => {
+		for await (const change of mongoFindingsCollection.watch()) {
 			const { operationType, fullDocument } = change
 			switch (operationType) {
 				case 'insert': {
-					dispatch(addQuestion(fullDocument))
+					dispatch(addFinding(fullDocument))
 					break
 				}
 
 				case 'delete': {
-					dispatch(deleteQuestion(change.documentKey._id))
+					dispatch(deleteFinding(change.documentKey._id))
 					break
 				}
 
@@ -35,7 +35,7 @@ const CollectionWatches = () => {
 	}
 
 	useEffect(() => {
-		watchChangesOnQuestions()
+		watchChangesOnFindings()
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[])
 

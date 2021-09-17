@@ -76,7 +76,7 @@ const SideBar: React.FC<IProps> = () => {
 					</ListItem>
 					{hasTestCoordinatorRole && <ListItem
 						button
-						onClick={() => navigate('/questions/admin')}
+						onClick={() => navigate('/')}
 					>
 						<ListItemIcon><QuestionAnswerIcon /></ListItemIcon>
 						<ListItemText
