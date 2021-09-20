@@ -22,6 +22,8 @@ import { Finding, FindingTheme, FindingType, FindingFieldName } from '../../type
 import { useRealmApp } from '../App/RealmApp'
 import { useHistory } from 'react-router-dom'
 import { BSON } from 'realm-web'
+import { format } from 'date-fns'
+import { nl } from 'date-fns/locale'
 
 const useStyles: any = makeStyles(() => ({
 	button: {
@@ -341,6 +343,15 @@ const ManageFindings: React.FC<IProps> = () => {
 									ml={1}
 								>
 									<Chip variant="outlined" color="primary" label={finding.status} size="small" />
+								</Box>
+								<Box
+									display="flex"
+									flexDirection="row"
+									alignItems="center"
+									justifyContent="flex-start"
+									ml={1}
+								>
+									<Typography variant="caption">{finding.testDate ? format(finding.testDate, 'Pp', { locale: nl }) : ""}</Typography>
 								</Box>
 							</Box>
 							{finding._id && <Box

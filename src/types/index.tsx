@@ -52,6 +52,7 @@ export type Finding = {
 	status?: Status;
 	feedbackDeveloper?: string;
 	feedbackToGATUser?: string;
+	testDate?: Date;
 }
 
 export enum FindingFieldName {

@@ -22,6 +22,8 @@ import { useRealmApp } from '../../App/RealmApp'
 import { Browser, Finding, FindingType, Status } from '../../../types'
 import { catitaliseFirstLetter } from '../../utils'
 import { FindingTheme } from '../../../types/index';
+import { format } from 'date-fns'
+import { nl } from 'date-fns/locale'
 
 const useStyles: any = makeStyles((theme) => ({
 	optionListItem: {
@@ -91,6 +93,7 @@ const FindingDetails = () => {
 				description: "",
 				status: Status.Open,
 				type: FindingType.Bug,
+				testDate: new Date(),
 			}
 			let findingThemesDataRequest = mongoFindingThemesCollection.find()
 			if (id) {
@@ -99,6 +102,7 @@ const FindingDetails = () => {
 				})
 			}
 			if (!findingData.status) findingData.status = Status.Open
+			if (!findingData.testDate) findingData.testDate = new Date()
 			setFinding(findingData)
 			setFindingThemes(await findingThemesDataRequest)
 		} catch (error) {
@@ -226,6 +230,16 @@ const FindingDetails = () => {
 						Opslaan
 					</Button>
 				</Box>
+			</Box>
+			<Box
+				display="flex"
+				flexDirection="row"
+				alignItems="center"
+				justifyContent="flex-start"
+				width="100%"
+				mb={2}
+			>
+				<Typography variant="caption">Testdatum: {finding?.testDate ? format(finding.testDate, 'Pp', { locale: nl }) : ""}</Typography>
 			</Box>
 			<Box
 				display="flex"
