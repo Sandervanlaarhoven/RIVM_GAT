@@ -25,11 +25,33 @@ export enum FindingType {
 	Verbetering = 'verbetering',
 }
 
+export enum Status {
+	Open = 'open',
+	Geverifieerd = 'geverifieerd',
+	Hertest = 'hertest',
+	Gesloten = 'gesloten',
+	Afgewezen = 'afgewezen',
+}
+
+export enum Browser {
+	Chrome = 'Chrome',
+	Edge = 'Edge',
+	Firefox = 'Firefox',
+	InternetExplorer = 'Internet Explorer',
+}
+
 export type Finding = {
 	_id?: BSON.ObjectId;
 	type: FindingType;
 	description: string;
+	expectedResult?: string;
+	actualResult?: string;
+	additionalInfo?: string;
+	browser?: Browser[];
 	theme?: string;
+	status?: Status;
+	feedbackDeveloper?: string;
+	feedbackToGATUser?: string;
 }
 
 export enum FindingFieldName {

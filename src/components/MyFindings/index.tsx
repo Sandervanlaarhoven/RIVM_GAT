@@ -311,22 +311,38 @@ const ManageFindings: React.FC<IProps> = () => {
 							justifyContent="space-between"
 							width="100%"
 						>
-							{finding.type === 'bug' && <Box
+							<Box
 								display="flex"
 								flexDirection="row"
 								alignItems="center"
 								justifyContent="flex-start"
 							>
-								<BugReportIcon />
-							</Box>}
-							{finding.type === 'verbetering' && <Box
-								display="flex"
-								flexDirection="row"
-								alignItems="center"
-								justifyContent="flex-start"
-							>
-								<MailOutlineIcon />
-							</Box>}
+								{finding.type === 'bug' && <Box
+									display="flex"
+									flexDirection="row"
+									alignItems="center"
+									justifyContent="flex-start"
+								>
+									<BugReportIcon />
+								</Box>}
+								{finding.type === 'verbetering' && <Box
+									display="flex"
+									flexDirection="row"
+									alignItems="center"
+									justifyContent="flex-start"
+								>
+									<MailOutlineIcon />
+								</Box>}
+								<Box
+									display="flex"
+									flexDirection="row"
+									alignItems="center"
+									justifyContent="flex-start"
+									ml={1}
+								>
+									<Chip variant="outlined" color="primary" label={finding.status} size="small" />
+								</Box>
+							</Box>
 							{finding._id && <Box
 								display="flex"
 								flexDirection="row"

@@ -11,7 +11,6 @@ import {
 	MenuItem,
 	Select,
 	FormGroup,
-	Chip,
 } from "@material-ui/core"
 import { makeStyles } from '@material-ui/core/styles'
 import { useSnackbar } from 'notistack'
@@ -20,7 +19,7 @@ import { useParams, useHistory } from 'react-router-dom'
 import { BSON } from 'realm-web'
 
 import { useRealmApp } from '../../App/RealmApp'
-import { Finding, FindingType } from '../../../types'
+import { Browser, Finding, FindingType, Status } from '../../../types'
 import { catitaliseFirstLetter } from '../../utils'
 import { FindingTheme } from '../../../types/index';
 
@@ -90,6 +89,7 @@ const FindingDetails = () => {
 		try {
 			let findingData = {
 				description: "",
+				status: Status.Open,
 				type: FindingType.Bug,
 			}
 			let findingThemesDataRequest = mongoFindingThemesCollection.find()
@@ -98,6 +98,7 @@ const FindingDetails = () => {
 					_id: new BSON.ObjectId(id)
 				})
 			}
+			if (!findingData.status) findingData.status = Status.Open
 			setFinding(findingData)
 			setFindingThemes(await findingThemesDataRequest)
 		} catch (error) {
@@ -152,60 +153,17 @@ const FindingDetails = () => {
 		}
 	}
 
-	const VerbeteringFinding = (finding: Finding) => {
-		return <Box
-			display="flex"
-			flexDirection="row"
-			alignItems="top"
-			justifyContent="space-between"
-			width="100%"
-		>
-			<Box>
-				<Typography>{finding.description}</Typography>
-			</Box>
-			{finding.theme && <Box ml={2}>
-				<Chip label={finding.theme} size="small" />
-			</Box>}
-		</Box>
-	}
-
-	const OpenFinding = (finding: Finding) => {
-		return <Box
-			display="flex"
-			flexDirection="row"
-			alignItems="top"
-			justifyContent="space-between"
-			width="100%"
-		>
-			<Box>
-				<Typography>{finding.description}</Typography>
-			</Box>
-			{finding.theme && <Box ml={2}>
-				<Chip label={finding.theme} size="small" />
-			</Box>}
-		</Box>
-	}
-
-	const FindingComponent = (finding: Finding) => {
-		switch (finding.type) {
-
-			case FindingType.Bug: {
-				return OpenFinding(finding)
-			}
-
-			case FindingType.Verbetering: {
-				return VerbeteringFinding(finding)
-			}
-
-			default:
-				break
-		}
-	}
-
 	enum FindingFieldName {
 		description = 'description',
+		expectedResult = 'expectedResult',
+		actualResult = 'actualResult',
+		additionalInfo = 'additionalInfo',
 		type = 'type',
 		findingTheme = 'theme',
+		browser = 'browser',
+		status = 'status',
+		feedbackDeveloper = 'feedbackDeveloper',
+		feedbackToGATUser = 'feedbackToGATUser',
 	}
 
 	const handleChangeTextField = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, fieldName: FindingFieldName) => {
@@ -278,11 +236,12 @@ const FindingDetails = () => {
 				pb={3}
 			>
 				<TextField
-					label="Bevinding"
+					label="Omschrijving"
 					value={finding?.description || ''}
 					fullWidth
 					variant="outlined"
 					onChange={(event) => handleChangeTextField(event, FindingFieldName.description)}
+					helperText="Korte omschrijving van de bevinding"
 				/>
 			</Box>
 			<Box
@@ -384,11 +343,93 @@ const FindingDetails = () => {
 			</Box>}
 			<Box
 				display="flex"
+				flexDirection="row"
+				alignItems="center"
+				justifyContent="center"
+				width="100%"
+				pb={3}
+			>
+				<TextField
+					label="Verwachte uitkomst"
+					value={finding?.expectedResult || ''}
+					fullWidth
+					variant="outlined"
+					onChange={(event) => handleChangeTextField(event, FindingFieldName.expectedResult)}
+					helperText="Schrijf hier in stappen uit wat je getest hebt en met welke data"
+				/>
+			</Box>
+			<Box
+				display="flex"
+				flexDirection="row"
+				alignItems="center"
+				justifyContent="center"
+				width="100%"
+				pb={3}
+			>
+				<TextField
+					label="Daadwerkelijke uitkomst"
+					value={finding?.actualResult || ''}
+					fullWidth
+					variant="outlined"
+					onChange={(event) => handleChangeTextField(event, FindingFieldName.actualResult)}
+					helperText="Schrijf hier in stappen uit wat de daadwerkelijke uitkomst was en waarom dit niet aan je verwachting voldoet"
+				/>
+			</Box>
+			<Box
+				display="flex"
+				flexDirection="row"
+				alignItems="center"
+				justifyContent="center"
+				width="100%"
+				pb={3}
+			>
+				<TextField
+					label="Extra informatie"
+					value={finding?.additionalInfo || ''}
+					fullWidth
+					variant="outlined"
+					onChange={(event) => handleChangeTextField(event, FindingFieldName.additionalInfo)}
+					helperText="Testdata / specifieke rollen, rechten"
+				/>
+			</Box>
+			<Box
+				display="flex"
+				flexDirection="row"
+				alignItems="center"
+				justifyContent="flex-start"
+				width="100%"
+				pb={3}
+			>
+				<Box
+					display="flex"
+					flexDirection="row"
+					alignItems="center"
+					justifyContent="center"
+				>
+					<FormControl className={classes.formControl}>
+						<InputLabel id="browser">Browser</InputLabel>
+						<Select
+							labelId="browser"
+							id="browser"
+							value={finding?.browser || ''}
+							onChange={(event) => handleChangeSelect(event, FindingFieldName.browser)}
+						>
+							<MenuItem key="" value={''}>Kies de browser waarmee is getest</MenuItem>
+							<MenuItem key={Browser.Chrome} value={Browser.Chrome}>{Browser.Chrome}</MenuItem>
+							<MenuItem key={Browser.Edge} value={Browser.Edge}>{Browser.Edge}</MenuItem>
+							<MenuItem key={Browser.Firefox} value={Browser.Firefox}>{Browser.Firefox}</MenuItem>
+							<MenuItem key={Browser.InternetExplorer} value={Browser.InternetExplorer}>{Browser.InternetExplorer}</MenuItem>
+						</Select>
+					</FormControl>
+				</Box>
+			</Box>
+			<Box
+				display="flex"
 				flexDirection="column"
 				justifyContent="center"
-				alignItems="flex-start"
+				alignItems="flex-end"
 				width="100%"
-				mt={3}
+				my={2}
 			>
 				<FormGroup row>
 					<FormControlLabel
@@ -400,46 +441,83 @@ const FindingDetails = () => {
 								color="primary"
 							/>
 						}
-						label="Hierna nog een bevinding toevoegen"
+						label="Nog een bevinding toevoegen"
 					/>
 				</FormGroup>
 			</Box>
 			<Box
 				display="flex"
 				flexDirection="row"
-				justifyContent="space-between"
 				alignItems="center"
+				justifyContent="flex-start"
 				width="100%"
-				pb={5}
-				pt={5}
+				my={3}
+			>
+				<Typography variant="h6">Terugkoppeling en status informatie</Typography>
+			</Box>
+			<Box
+				display="flex"
+				flexDirection="row"
+				alignItems="center"
+				justifyContent="flex-start"
+				width="100%"
+				my={1}
 			>
 				<Box
 					display="flex"
 					flexDirection="row"
-					justifyContent="flex-start"
 					alignItems="center"
+					justifyContent="center"
 				>
-					<Typography variant="h6">Preview</Typography>
+					<FormControl className={classes.formControl}>
+						<InputLabel id="status">Status</InputLabel>
+						<Select
+							labelId="status"
+							id="status"
+							value={finding?.status || Status.Open}
+							onChange={(event) => handleChangeSelect(event, FindingFieldName.status)}
+						>
+							<MenuItem key={Status.Open} value={Status.Open}>{Status.Open}</MenuItem>
+							<MenuItem key={Status.Geverifieerd} value={Status.Geverifieerd}>{Status.Geverifieerd}</MenuItem>
+							<MenuItem key={Status.Afgewezen} value={Status.Afgewezen}>{Status.Afgewezen}</MenuItem>
+							<MenuItem key={Status.Hertest} value={Status.Hertest}>{Status.Hertest}</MenuItem>
+							<MenuItem key={Status.Gesloten} value={Status.Gesloten}>{Status.Gesloten}</MenuItem>
+						</Select>
+					</FormControl>
 				</Box>
 			</Box>
 			<Box
 				display="flex"
-				flexDirection="column"
+				flexDirection="row"
 				alignItems="center"
-				justifyContent="flex-start"
+				justifyContent="center"
 				width="100%"
-				mt={2}
+				my={1}
 			>
-				{finding ? <Box
-						display="flex"
-						flexDirection="column"
-						alignItems="flex-start"
-						justifyContent="center"
-						width="100%"
-						pb={5}
-					>
-						{FindingComponent(finding)}
-					</Box> : null}
+				<TextField
+					label="Terugkoppeling van de ontwikkelaar"
+					value={finding?.feedbackDeveloper || ''}
+					fullWidth
+					variant="outlined"
+					onChange={(event) => handleChangeTextField(event, FindingFieldName.feedbackDeveloper)}
+				/>
+			</Box>
+			<Box
+				display="flex"
+				flexDirection="row"
+				alignItems="center"
+				justifyContent="center"
+				width="100%"
+				my={1}
+			>
+				<TextField
+					label="Terugkoppeling van de testcoordinator"
+					value={finding?.feedbackToGATUser || ''}
+					fullWidth
+					variant="outlined"
+					onChange={(event) => handleChangeTextField(event, FindingFieldName.feedbackToGATUser)}
+					helperText="Terugkoppeling van de testcoordinator naar de GAT tester"
+				/>
 			</Box>
 		</Box>
 	)
