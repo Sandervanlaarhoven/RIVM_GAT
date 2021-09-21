@@ -222,7 +222,6 @@ const FindingsOverview: React.FC<IProps> = () => {
 	}
 
 	const handleChangeTab = (event: React.ChangeEvent<{}>, newValue: number) => {
-		console.log(newValue)
 		setCurrentTab(newValue)
 	}
 

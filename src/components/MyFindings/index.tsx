@@ -10,6 +10,8 @@ import {
 	MenuItem,
 	Select,
 	Chip,
+	Tab,
+	Tabs,
 } from "@material-ui/core"
 import { makeStyles } from '@material-ui/core/styles'
 import DeleteIcon from '@material-ui/icons/Delete'
@@ -18,7 +20,7 @@ import BugReportIcon from '@material-ui/icons/BugReport'
 import MailOutlineIcon from '@material-ui/icons/MailOutline'
 import { useSnackbar } from 'notistack'
 
-import { Finding, FindingTheme, FindingType, FindingFieldName } from '../../types'
+import { Finding, FindingTheme, FindingType, FindingFieldName, Status } from '../../types'
 import { useRealmApp } from '../App/RealmApp'
 import { useHistory } from 'react-router-dom'
 import { BSON } from 'realm-web'
@@ -56,6 +58,7 @@ const ManageFindings: React.FC<IProps> = () => {
 	const mongoFindingThemesCollection = mongo.db("RIVM_GAT").collection("finding_themes")
 	const [findingThemes, setFindingThemes] = useState<FindingTheme[]>([])
 	const [findings, setFindings] = useState<Finding[]>([])
+	const [currentTab, setCurrentTab] = React.useState(0);
 
 	const getData = async () => {
 		try {
@@ -86,11 +89,14 @@ const ManageFindings: React.FC<IProps> = () => {
 						passedPropsFilter = false
 					}
 				}
+				debugger
+				if (finding.status !== Status.Gesloten && currentTab === 1) passedPropsFilter = false
+				if (finding.status === Status.Gesloten && currentTab === 0) passedPropsFilter = false
 				return passedPropsFilter && finding.description.toLowerCase().includes(filterString.toLowerCase())
 			}))
 		}, 500);
 		return () => clearTimeout(filterTimeout)
-	}, [filterString, propsFilter, findings])
+	}, [filterString, propsFilter, findings, currentTab])
 
 	const VerbeteringFinding = (finding: Finding) => {
 		return <Box
@@ -196,6 +202,11 @@ const ManageFindings: React.FC<IProps> = () => {
 		})
 	}
 
+	const handleChangeTab = (event: React.ChangeEvent<{}>, newValue: number) => {
+		console.log(newValue)
+		setCurrentTab(newValue)
+	}
+
 	return (
 		<Box
 			display="flex"
@@ -287,6 +298,10 @@ const ManageFindings: React.FC<IProps> = () => {
 					</Box>
 				</Box>
 			</Box>
+			<Tabs value={currentTab} onChange={handleChangeTab} indicatorColor="primary">
+				<Tab label={Status.Open} />
+				<Tab label={Status.Gesloten} />
+			</Tabs>
 			<Box
 				display="flex"
 				flexDirection="column"
