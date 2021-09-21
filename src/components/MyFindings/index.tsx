@@ -89,7 +89,6 @@ const ManageFindings: React.FC<IProps> = () => {
 						passedPropsFilter = false
 					}
 				}
-				debugger
 				if (finding.status !== Status.Gesloten && currentTab === 1) passedPropsFilter = false
 				if (finding.status === Status.Gesloten && currentTab === 0) passedPropsFilter = false
 				return passedPropsFilter && finding.description.toLowerCase().includes(filterString.toLowerCase())
