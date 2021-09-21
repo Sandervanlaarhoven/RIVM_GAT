@@ -260,7 +260,6 @@ const FindingDetailsAdmin = () => {
 						value={finding?.description || ''}
 						fullWidth
 						variant="outlined"
-						onChange={(event) => handleChangeTextField(event, FindingFieldName.description)}
 						helperText="Korte omschrijving van de bevinding"
 					/>
 				</Box>
@@ -376,7 +375,6 @@ const FindingDetailsAdmin = () => {
 						fullWidth
 						multiline
 						variant="outlined"
-						onChange={(event) => handleChangeTextField(event, FindingFieldName.expectedResult)}
 						helperText="Schrijf hier in stappen uit wat je getest hebt en met welke data"
 					/>
 				</Box>
@@ -394,7 +392,6 @@ const FindingDetailsAdmin = () => {
 						fullWidth
 						multiline
 						variant="outlined"
-						onChange={(event) => handleChangeTextField(event, FindingFieldName.actualResult)}
 						helperText="Schrijf hier in stappen uit wat de daadwerkelijke uitkomst was en waarom dit niet aan je verwachting voldoet"
 					/>
 				</Box>
@@ -436,7 +433,6 @@ const FindingDetailsAdmin = () => {
 								labelId="browser"
 								id="browser"
 								value={finding?.browser || ''}
-								onChange={(event) => handleChangeSelect(event, FindingFieldName.browser)}
 							>
 								<MenuItem key="" value={''}>Kies de browser waarmee is getest</MenuItem>
 								<MenuItem key={Browser.Chrome} value={Browser.Chrome}>{Browser.Chrome}</MenuItem>
