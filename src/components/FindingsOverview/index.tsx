@@ -10,6 +10,8 @@ import {
 	MenuItem,
 	Select,
 	Chip,
+	Tab,
+	Tabs,
 } from "@material-ui/core"
 import { makeStyles } from '@material-ui/core/styles'
 import DeleteIcon from '@material-ui/icons/Delete'
@@ -18,7 +20,7 @@ import BugReportIcon from '@material-ui/icons/BugReport'
 import MailOutlineIcon from '@material-ui/icons/MailOutline'
 import { useSnackbar } from 'notistack'
 
-import { Finding, FindingTheme, FindingType, FindingFieldName } from '../../types'
+import { Finding, FindingTheme, FindingType, FindingFieldName, Status } from '../../types'
 import { useRealmApp } from '../App/RealmApp'
 import { useHistory } from 'react-router-dom'
 import { BSON } from 'realm-web'
@@ -55,6 +57,7 @@ const FindingsOverview: React.FC<IProps> = () => {
 	const mongoFindingThemesCollection = mongo.db("RIVM_GAT").collection("finding_themes")
 	const [findingThemes, setFindingThemes] = useState<FindingTheme[]>([])
 	const [findings, setFindings] = useState<Finding[]>([])
+	const [currentTab, setCurrentTab] = React.useState(0);
 
 	const getData = async () => {
 		try {
@@ -79,15 +82,40 @@ const FindingsOverview: React.FC<IProps> = () => {
 			setfilteredFindings(findings.filter((finding) => {
 				let passedPropsFilter = true
 				if (propsFilter) {
-					if (propsFilter.theme && finding.theme !== propsFilter.theme) {
-						passedPropsFilter = false
-					}
+					if (propsFilter.theme && finding.theme !== propsFilter.theme) passedPropsFilter = false
 				}
+				let statusFilterValue = Status.Open
+				switch (currentTab) {
+					case 0: {
+						statusFilterValue = Status.Open
+						break
+					}
+					case 1: {
+						statusFilterValue = Status.Geverifieerd
+						break
+					}
+					case 2: {
+						statusFilterValue = Status.Afgewezen
+						break
+					}
+					case 3: {
+						statusFilterValue = Status.Hertest
+						break
+					}
+					case 4: {
+						statusFilterValue = Status.Gesloten
+						break
+					}
+
+					default:
+						break
+				}
+				if (finding.status !== statusFilterValue) passedPropsFilter = false
 				return passedPropsFilter && finding.description.toLowerCase().includes(filterString.toLowerCase())
 			}))
 		}, 500);
 		return () => clearTimeout(filterTimeout)
-	}, [filterString, propsFilter, findings])
+	}, [filterString, propsFilter, findings, currentTab])
 
 	const VerbeteringFinding = (finding: Finding) => {
 		return <Box
@@ -193,6 +221,11 @@ const FindingsOverview: React.FC<IProps> = () => {
 		})
 	}
 
+	const handleChangeTab = (event: React.ChangeEvent<{}>, newValue: number) => {
+		console.log(newValue)
+		setCurrentTab(newValue)
+	}
+
 	return (
 		<Box
 			display="flex"
@@ -284,14 +317,29 @@ const FindingsOverview: React.FC<IProps> = () => {
 					</Box>
 				</Box>
 			</Box>
+			<Tabs value={currentTab} onChange={handleChangeTab} indicatorColor="primary">
+				<Tab label={Status.Open} />
+				<Tab label={Status.Geverifieerd} />
+				<Tab label={Status.Afgewezen} />
+				<Tab label={Status.Hertest} />
+				<Tab label={Status.Gesloten} />
+			</Tabs>
 			<Box
 				display="flex"
 				flexDirection="column"
-				alignItems="center"
+				alignItems="flex-start"
 				justifyContent="flex-start"
 				width="100%"
-				mt={2}
+				my={5}
 			>
+				{filteredFindings.length === 0 && <Box
+					display="flex"
+					flexDirection="column"
+					alignItems="flex-start"
+					justifyContent="center"
+				>
+					<Typography variant="body2"><i>Er zijn geen bevindingen met deze status.</i></Typography>
+				</Box>}
 				{filteredFindings && filteredFindings.map((finding, index) => {
 					return finding ? <Box
 						display="flex"

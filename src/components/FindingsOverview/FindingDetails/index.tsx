@@ -146,7 +146,7 @@ const FindingDetailsAdmin = () => {
 				})
 			}
 			if (!anotherNewFinding) {
-				history.push("/findings")
+				history.push("/findingsoverview")
 			} else {
 				const newFinding: Finding = {
 					description: '',
