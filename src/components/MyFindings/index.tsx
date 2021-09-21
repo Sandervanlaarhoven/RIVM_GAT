@@ -310,6 +310,14 @@ const ManageFindings: React.FC<IProps> = () => {
 				width="100%"
 				mt={2}
 			>
+				{filteredFindings.length === 0 && <Box
+					display="flex"
+					flexDirection="column"
+					alignItems="flex-start"
+					justifyContent="center"
+				>
+					<Typography variant="body2"><i>Er zijn geen bevindingen met deze status.</i></Typography>
+				</Box>}
 				{filteredFindings && filteredFindings.map((finding, index) => {
 					return finding ? <Box
 						display="flex"
