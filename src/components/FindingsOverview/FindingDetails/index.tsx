@@ -534,13 +534,13 @@ const FindingDetailsAdmin = () => {
 					my={3}
 				>
 					<TextField
-						label="Terugkoppeling van de testcoordinator"
+						label="Terugkoppeling van de testcoördinator"
 						value={finding?.feedbackToGATUser || ''}
 						multiline
 						fullWidth
 						variant="outlined"
 						onChange={(event) => handleChangeTextField(event, FindingFieldName.feedbackToGATUser)}
-						helperText="Terugkoppeling van de testcoordinator naar de GAT tester"
+						helperText="Terugkoppeling van de testcoördinator naar de GAT tester"
 					/>
 				</Box>
 			</Paper>

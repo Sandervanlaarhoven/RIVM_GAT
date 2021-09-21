@@ -440,7 +440,7 @@ const FindingDetails = () => {
 					my={3}
 				>
 					<TextField
-						label="Terugkoppeling van de testcoordinator"
+						label="Terugkoppeling van de testcoördinator"
 						value={finding?.feedbackToGATUser || ''}
 						fullWidth
 						multiline
