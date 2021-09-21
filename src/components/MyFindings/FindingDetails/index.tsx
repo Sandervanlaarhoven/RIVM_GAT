@@ -371,6 +371,16 @@ const FindingDetails = () => {
 						</FormControl>
 					</Box>
 				</Box>
+				<Box
+					display="flex"
+					flexDirection="row"
+					alignItems="center"
+					justifyContent="flex-start"
+					width="100%"
+					mb={2}
+				>
+					<Typography variant="body2"><i>Screenshots kunnen door middel van een word document via Teams worden gedeeld met de testcoördinator.</i></Typography>
+				</Box>
 			</Paper>
 			<Box
 				display="flex"

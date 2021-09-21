@@ -420,9 +420,9 @@ const FindingsOverview: React.FC<IProps> = () => {
 								<IconButton aria-label="delete" className={classes.margin} color="primary" onClick={() => onEditClick(finding._id)}>
 									<EditIcon />
 								</IconButton>
-								<IconButton aria-label="delete" className={classes.margin} color="secondary" onClick={() => onDeleteClick(finding._id)}>
+								{finding.status === Status.Open && <IconButton aria-label="delete" className={classes.margin} color="secondary" onClick={() => onDeleteClick(finding._id)}>
 									<DeleteIcon />
-								</IconButton>
+								</IconButton>}
 							</Box>}
 						</Box>
 						{FindingComponent(finding)}
