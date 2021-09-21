@@ -305,7 +305,7 @@ const ManageFindings: React.FC<IProps> = () => {
 			<Box
 				display="flex"
 				flexDirection="column"
-				alignItems="center"
+				alignItems="flex-start"
 				justifyContent="flex-start"
 				width="100%"
 				mt={2}
