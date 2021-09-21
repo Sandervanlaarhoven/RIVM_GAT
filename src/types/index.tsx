@@ -42,6 +42,8 @@ export enum Browser {
 
 export type Finding = {
 	_id?: BSON.ObjectId;
+	uid?: BSON.ObjectId;
+	userEmail?: string;
 	type: FindingType;
 	description: string;
 	expectedResult?: string;

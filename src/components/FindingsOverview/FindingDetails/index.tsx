@@ -49,7 +49,7 @@ interface params {
 	id: string
 }
 
-const FindingDetails = () => {
+const FindingDetailsAdmin = () => {
 	const classes = useStyles()
 	const app = useRealmApp()
 	const history = useHistory()
@@ -59,8 +59,38 @@ const FindingDetails = () => {
 	const mongoFindingThemesCollection = mongo.db("RIVM_GAT").collection("finding_themes")
 	const [finding, setFinding] = useState<Finding>()
 	const [findingThemes, setFindingThemes] = useState<FindingTheme[]>([])
+	const [showNewTheme, setShowNewTheme] = useState<boolean>(false)
+	const [newTheme, setNewTheme] = useState<FindingTheme | undefined>()
 	const { enqueueSnackbar } = useSnackbar()
 	const [anotherNewFinding, setAnotherNewFinding] = useState<boolean>(false)
+
+	const onChangeNewTheme = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+		setNewTheme({
+			name: catitaliseFirstLetter(event.target.value)
+		})
+	}
+
+	const createNewTheme = async () => {
+		if (newTheme?.name) {
+			try {
+				await mongoFindingThemesCollection.updateOne({
+					name: newTheme?.name
+				}, newTheme, {
+					upsert: true
+				})
+				setFindingThemes([
+					...findingThemes,
+					newTheme
+				])
+				setNewTheme(undefined)
+				setShowNewTheme(false)
+			} catch (error) {
+				enqueueSnackbar('Er is helaas iets mis gegaan bij het aanmaken van het nieuwe thema.', {
+					variant: 'error',
+				})
+			}
+		}
+	}
 
 	const getData = async () => {
 		try {
@@ -69,8 +99,6 @@ const FindingDetails = () => {
 				status: Status.Open,
 				type: FindingType.Bug,
 				testDate: new Date(),
-				uid: app.currentUser.id,
-				userEmail: app.currentUser.profile?.email || "Onbekend",
 			}
 			let findingThemesDataRequest = mongoFindingThemesCollection.find()
 			if (id) {
@@ -258,7 +286,7 @@ const FindingDetails = () => {
 						</Select>
 					</FormControl>
 				</Box>
-				<Box
+				{!showNewTheme && <Box
 					display="flex"
 					flexDirection="row"
 					alignItems="center"
@@ -285,7 +313,55 @@ const FindingDetails = () => {
 							</Select>
 						</FormControl>
 					</Box>
-				</Box>
+					<Box
+						display="flex"
+						flexDirection="row"
+						alignItems="center"
+						justifyContent="center"
+					>
+						<Button variant="outlined" className={classes.button} color="primary" onClick={() => setShowNewTheme(true)}>
+							Nieuw thema
+						</Button>
+					</Box>
+				</Box>}
+				{showNewTheme && <Box
+					display="flex"
+					flexDirection="row"
+					alignItems="center"
+					justifyContent="flex-start"
+					width="100%"
+					pb={3}
+				>
+					<Box
+						display="flex"
+						flexDirection="row"
+						alignItems="center"
+						justifyContent="center"
+						width={300}
+					>
+						<TextField
+							label="Thema"
+							value={newTheme?.name || ''}
+							fullWidth
+							multiline
+							variant="outlined"
+							onChange={onChangeNewTheme}
+						/>
+					</Box>
+					<Box
+						display="flex"
+						flexDirection="row"
+						alignItems="center"
+						justifyContent="center"
+					>
+						<Button variant="text" className={classes.button} color="default" onClick={() => setShowNewTheme(false)}>
+							Annuleren
+						</Button>
+						<Button variant="contained" className={classes.button} color="primary" onClick={createNewTheme}>
+							Aanmaken
+						</Button>
+					</Box>
+				</Box>}
 				<Box
 					display="flex"
 					flexDirection="row"
@@ -298,8 +374,8 @@ const FindingDetails = () => {
 						label="Verwachte uitkomst"
 						value={finding?.expectedResult || ''}
 						fullWidth
-						variant="outlined"
 						multiline
+						variant="outlined"
 						onChange={(event) => handleChangeTextField(event, FindingFieldName.expectedResult)}
 						helperText="Schrijf hier in stappen uit wat je getest hebt en met welke data"
 					/>
@@ -411,11 +487,32 @@ const FindingDetails = () => {
 					alignItems="center"
 					justifyContent="flex-start"
 					width="100%"
-					mb={2}
+					my={3}
 				>
-					<Typography variant="caption">Status: {finding?.status || Status.Open}</Typography>
+					<Box
+						display="flex"
+						flexDirection="row"
+						alignItems="center"
+						justifyContent="center"
+					>
+						<FormControl className={classes.formControl}>
+							<InputLabel id="status">Status</InputLabel>
+							<Select
+								labelId="status"
+								id="status"
+								value={finding?.status || Status.Open}
+								onChange={(event) => handleChangeSelect(event, FindingFieldName.status)}
+							>
+								<MenuItem key={Status.Open} value={Status.Open}>{Status.Open}</MenuItem>
+								<MenuItem key={Status.Geverifieerd} value={Status.Geverifieerd}>{Status.Geverifieerd}</MenuItem>
+								<MenuItem key={Status.Afgewezen} value={Status.Afgewezen}>{Status.Afgewezen}</MenuItem>
+								<MenuItem key={Status.Hertest} value={Status.Hertest}>{Status.Hertest}</MenuItem>
+								<MenuItem key={Status.Gesloten} value={Status.Gesloten}>{Status.Gesloten}</MenuItem>
+							</Select>
+						</FormControl>
+					</Box>
 				</Box>
-				{finding?.feedbackDeveloper && <Box
+				<Box
 					display="flex"
 					flexDirection="row"
 					alignItems="center"
@@ -426,12 +523,13 @@ const FindingDetails = () => {
 					<TextField
 						label="Terugkoppeling van de ontwikkelaar"
 						value={finding?.feedbackDeveloper || ''}
-						fullWidth
 						multiline
+						fullWidth
 						variant="outlined"
+						onChange={(event) => handleChangeTextField(event, FindingFieldName.feedbackDeveloper)}
 					/>
-				</Box>}
-				{finding?.feedbackToGATUser && <Box
+				</Box>
+				<Box
 					display="flex"
 					flexDirection="row"
 					alignItems="center"
@@ -442,14 +540,16 @@ const FindingDetails = () => {
 					<TextField
 						label="Terugkoppeling van de testcoordinator"
 						value={finding?.feedbackToGATUser || ''}
-						fullWidth
 						multiline
+						fullWidth
 						variant="outlined"
+						onChange={(event) => handleChangeTextField(event, FindingFieldName.feedbackToGATUser)}
+						helperText="Terugkoppeling van de testcoordinator naar de GAT tester"
 					/>
-				</Box>}
+				</Box>
 			</Paper>
 		</Box>
 	)
 }
 
-export default FindingDetails
+export default FindingDetailsAdmin

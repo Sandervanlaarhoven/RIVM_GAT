@@ -16,6 +16,8 @@ import RequireRole from '../utils/RequireRole'
 import { Role } from '../../types/index';
 import MyFindings from '../MyFindings'
 import FindingDetails from '../MyFindings/FindingDetails'
+import FindingsOverview from '../FindingsOverview/index';
+import FindingDetailsAdmin from '../FindingsOverview/FindingDetails/index';
 
 const REALM_APP_ID = "rivm_gat-lkoaf"
 
@@ -72,11 +74,20 @@ const App = () => {
               </Framework>
             </RequireLoggedInUser>
           </Route>
-          <Route exact path="/surveys/admin">
+          <Route exact path="/findingsoverview">
             <RequireLoggedInUser>
               <Framework>
                 <RequireRole role={Role.test_coordinator}>
-                  <MyFindings />
+                  <FindingsOverview />
+                </RequireRole>
+              </Framework>
+            </RequireLoggedInUser>
+          </Route>
+          <Route exact path="/findingsoverview/:id">
+            <RequireLoggedInUser>
+              <Framework>
+                <RequireRole role={Role.test_coordinator}>
+                  <FindingDetailsAdmin />
                 </RequireRole>
               </Framework>
             </RequireLoggedInUser>

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { List, ListItem, ListItemText, Box, ListItemIcon } from "@material-ui/core"
 import ListIcon from "@material-ui/icons/List"
-import QuestionAnswerIcon from "@material-ui/icons/QuestionAnswer"
+import PlaylistAddIcon from "@material-ui/icons/PlaylistAdd"
 import { useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -69,16 +69,16 @@ const SideBar: React.FC<IProps> = () => {
 						button
 						onClick={() => navigate('/')}
 					>
-						<ListItemIcon><ListIcon /></ListItemIcon>
+						<ListItemIcon><PlaylistAddIcon /></ListItemIcon>
 						<ListItemText
 							primary='Mijn bevindingen'
 						/>
 					</ListItem>
 					{hasTestCoordinatorRole && <ListItem
 						button
-						onClick={() => navigate('/')}
+						onClick={() => navigate('/findingsoverview')}
 					>
-						<ListItemIcon><QuestionAnswerIcon /></ListItemIcon>
+						<ListItemIcon><ListIcon /></ListItemIcon>
 						<ListItemText
 							primary='Beheren bevindingen'
 						/>

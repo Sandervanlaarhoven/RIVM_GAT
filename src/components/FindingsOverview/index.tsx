@@ -41,14 +41,13 @@ type PropsFilter = {
 	theme?: string,
 }
 
-const ManageFindings: React.FC<IProps> = () => {
+const FindingsOverview: React.FC<IProps> = () => {
 	const classes = useStyles()
 	const [filteredFindings, setfilteredFindings] = useState<Finding[]>([])
 	const [filterString, setFilterString] = useState<string>('')
 	const [propsFilter, setPropsFilter] = useState<PropsFilter>({})
 	const history = useHistory()
 	const app = useRealmApp()
-	const uid = app.currentUser.id
 	const { enqueueSnackbar } = useSnackbar()
 	const mongo = app.currentUser.mongoClient("mongodb-atlas")
 	const mongoFindingsCollection = mongo.db("RIVM_GAT").collection("findings")
@@ -59,9 +58,7 @@ const ManageFindings: React.FC<IProps> = () => {
 
 	const getData = async () => {
 		try {
-			const findingsData = mongoFindingsCollection.find({
-				uid
-			})
+			const findingsData = mongoFindingsCollection.find()
 			let findingThemesData = mongoFindingThemesCollection.find()
 			setFindings(await findingsData)
 			setFindingThemes(await findingThemesData)
@@ -147,7 +144,7 @@ const ManageFindings: React.FC<IProps> = () => {
 	}
 
 	const onEditClick = (findingID: BSON.ObjectId | undefined) => {
-		if (findingID) history.push(`/findings/${findingID}`)
+		if (findingID) history.push(`/findingsoverview/${findingID}`)
 	}
 
 	const cleanupSurveysAfterDelete = async (findingID: BSON.ObjectId) => {
@@ -357,6 +354,15 @@ const ManageFindings: React.FC<IProps> = () => {
 								>
 									<Typography variant="caption">{finding.testDate ? format(finding.testDate, 'Pp', { locale: nl }) : ""}</Typography>
 								</Box>
+								{finding.userEmail && <Box
+									display="flex"
+									flexDirection="row"
+									alignItems="center"
+									justifyContent="flex-start"
+									ml={1}
+								>
+									<Typography variant="caption"> - {finding.userEmail}</Typography>
+								</Box>}
 							</Box>
 							{finding._id && <Box
 								display="flex"
@@ -380,4 +386,4 @@ const ManageFindings: React.FC<IProps> = () => {
 	)
 }
 
-export default ManageFindings
+export default FindingsOverview
