@@ -384,7 +384,17 @@ const FindingDetails = () => {
 					width="100%"
 					mb={2}
 				>
-					<Typography variant="body2"><i>Screenshots kunnen door middel van een word document via Teams worden gedeeld met de testcoördinator.</i></Typography>
+					<Typography variant="body2"><i>Screenshots kunnen door middel van een word document via Teams worden gedeeld met de testcoördinator. Geef het word document daarbij de volgende naam (kopiëren): </i></Typography>
+				</Box>
+				<Box
+					display="flex"
+					flexDirection="row"
+					alignItems="center"
+					justifyContent="flex-start"
+					width="100%"
+					mb={2}
+				>
+					<Typography variant="body2"><b>"{finding?.testDate ? format(finding.testDate, 'Pp', { locale: nl }) : ""} - {app.currentUser.profile?.email || 'onbekend'}"</b></Typography>
 				</Box>
 			</Paper>
 			<Box

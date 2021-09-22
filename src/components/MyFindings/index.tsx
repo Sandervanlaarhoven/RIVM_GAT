@@ -54,7 +54,6 @@ const ManageFindings: React.FC<IProps> = () => {
 	const { enqueueSnackbar } = useSnackbar()
 	const mongo = app.currentUser.mongoClient("mongodb-atlas")
 	const mongoFindingsCollection = mongo.db("RIVM_GAT").collection("findings")
-	const mongoSurveysCollection = mongo.db("RIVM_GAT").collection("surveys")
 	const mongoFindingThemesCollection = mongo.db("RIVM_GAT").collection("finding_themes")
 	const [findingThemes, setFindingThemes] = useState<FindingTheme[]>([])
 	const [findings, setFindings] = useState<Finding[]>([])
@@ -91,7 +90,7 @@ const ManageFindings: React.FC<IProps> = () => {
 				}
 				if (finding.status !== Status.Gesloten && currentTab === 1) passedPropsFilter = false
 				if (finding.status === Status.Gesloten && currentTab === 0) passedPropsFilter = false
-				return passedPropsFilter && finding.description.toLowerCase().includes(filterString.toLowerCase())
+				return passedPropsFilter && (finding.description.toLowerCase().includes(filterString.toLowerCase()) || format(finding.testDate, 'Pp', { locale: nl }).includes(filterString.toLowerCase()))
 			}).sort((a, b) => b.testDate.valueOf() - a.testDate.valueOf()))
 		}, 500);
 		return () => clearTimeout(filterTimeout)
@@ -155,24 +154,9 @@ const ManageFindings: React.FC<IProps> = () => {
 		if (findingID) history.push(`/findings/${findingID}`)
 	}
 
-	const cleanupSurveysAfterDelete = async (findingID: BSON.ObjectId) => {
-		try {
-			return await mongoSurveysCollection.updateMany({
-				findings: new BSON.ObjectId(findingID)
-			}, {
-				$pull: { findings: new BSON.ObjectId(findingID) }
-			})
-		} catch (error) {
-			enqueueSnackbar('Er is helaas iets mis gegaan bij het verwijderen van de vraag uit de vragenlijsten waar deze gebruikt wordt.', {
-				variant: 'error',
-			})
-		}
-	}
-
 	const onDeleteClick = async (findingID: BSON.ObjectId | undefined) => {
 		if (findingID) {
 			try {
-				await cleanupSurveysAfterDelete(findingID)
 				await mongoFindingsCollection.deleteOne({
 					_id: new BSON.ObjectId(findingID)
 				})
@@ -260,7 +244,7 @@ const ManageFindings: React.FC<IProps> = () => {
 					mr={3}
 				>
 					<TextField
-						label="Zoeken op vraag"
+						label="Zoeken op omschrijving of datum (dd-mm-jjjj)"
 						onChange={onChangeFilterString}
 						InputLabelProps={{
 							shrink: true,
