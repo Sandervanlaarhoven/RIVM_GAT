@@ -65,7 +65,9 @@ const FindingsOverview: React.FC<IProps> = () => {
 
 	const getData = async () => {
 		try {
-			const findingsData = mongoFindingsCollection.find()
+			const findingsData = mongoFindingsCollection.find(null, {
+				sort: { testDate: -1 }
+			})
 			let findingThemesData = mongoFindingThemesCollection.find()
 			dispatch(set(await findingsData))
 			setFindingThemes(await findingThemesData)
@@ -116,7 +118,7 @@ const FindingsOverview: React.FC<IProps> = () => {
 				}
 				if (finding.status !== statusFilterValue) passedPropsFilter = false
 				return passedPropsFilter && finding.description.toLowerCase().includes(filterString.toLowerCase())
-			}))
+			}).sort((a, b) => b.testDate.valueOf() - a.testDate.valueOf()))
 		}, 500);
 		return () => clearTimeout(filterTimeout)
 	}, [filterString, propsFilter, findings, currentTab])

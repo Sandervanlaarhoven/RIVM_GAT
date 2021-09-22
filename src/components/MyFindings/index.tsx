@@ -92,7 +92,7 @@ const ManageFindings: React.FC<IProps> = () => {
 				if (finding.status !== Status.Gesloten && currentTab === 1) passedPropsFilter = false
 				if (finding.status === Status.Gesloten && currentTab === 0) passedPropsFilter = false
 				return passedPropsFilter && finding.description.toLowerCase().includes(filterString.toLowerCase())
-			}))
+			}).sort((a, b) => b.testDate.valueOf() - a.testDate.valueOf()))
 		}, 500);
 		return () => clearTimeout(filterTimeout)
 	}, [filterString, propsFilter, findings, currentTab])

@@ -18,7 +18,7 @@ import { useRealmApp } from '../App/RealmApp'
 import { catitaliseFirstLetter } from '../utils'
 import { FindingTheme } from '../../types/index';
 
-const useStyles: any = makeStyles((theme) => ({
+const useStyles: any = makeStyles(() => ({
 	optionListItem: {
 		width: '100%',
 	},
@@ -38,9 +38,6 @@ const useStyles: any = makeStyles((theme) => ({
 	},
 }))
 
-interface params {
-	id: string
-}
 
 interface IProps {
 }
@@ -99,14 +96,7 @@ const Settings: React.FC<IProps> = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
-	enum FindingFieldName {
-		findingTheme = 'theme',
-	}
 
-	type selectEventProps = {
-		name?: string | undefined,
-		value: unknown
-	}
 
 	return (
 		<Box
