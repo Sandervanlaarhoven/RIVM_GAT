@@ -26,6 +26,8 @@ import { useHistory } from 'react-router-dom'
 import { BSON } from 'realm-web'
 import { format } from 'date-fns'
 import { nl } from 'date-fns/locale'
+import { set } from '../../redux/findings/findingsSlice'
+import { useAppSelector, useAppDispatch } from '../../hooks'
 
 const useStyles: any = makeStyles(() => ({
 	button: {
@@ -45,6 +47,7 @@ type PropsFilter = {
 
 const FindingsOverview: React.FC<IProps> = () => {
 	const classes = useStyles()
+	const dispatch = useAppDispatch()
 	const [filteredFindings, setfilteredFindings] = useState<Finding[]>([])
 	const [filterString, setFilterString] = useState<string>('')
 	const [propsFilter, setPropsFilter] = useState<PropsFilter>({})
@@ -56,14 +59,15 @@ const FindingsOverview: React.FC<IProps> = () => {
 	const mongoSurveysCollection = mongo.db("RIVM_GAT").collection("surveys")
 	const mongoFindingThemesCollection = mongo.db("RIVM_GAT").collection("finding_themes")
 	const [findingThemes, setFindingThemes] = useState<FindingTheme[]>([])
-	const [findings, setFindings] = useState<Finding[]>([])
+	const findingsDataState = useAppSelector(state => state.findingsData)
+	const { findings } = findingsDataState
 	const [currentTab, setCurrentTab] = React.useState(0);
 
 	const getData = async () => {
 		try {
 			const findingsData = mongoFindingsCollection.find()
 			let findingThemesData = mongoFindingThemesCollection.find()
-			setFindings(await findingsData)
+			dispatch(set(await findingsData))
 			setFindingThemes(await findingThemesData)
 		} catch (error) {
 			enqueueSnackbar('Er is helaas iets mis gegaan bij het ophalen van de gegevens.', {

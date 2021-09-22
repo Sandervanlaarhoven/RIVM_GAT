@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../../redux/store';
 import Header from './Header';
 import SideBar from '../SideBar';
+import CollectionWatches from './CollectionWatches/index';
 
 
 interface IProps { }
@@ -17,6 +18,7 @@ const Framework: React.FC<IProps> = ({ children }) => {
 
 	return <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center" width="100%" >
     <Header/>
+    <CollectionWatches/>
     <Box
       display="flex"
       width="100%"
