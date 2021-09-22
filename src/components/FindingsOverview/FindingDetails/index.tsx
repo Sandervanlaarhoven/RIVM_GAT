@@ -3,14 +3,11 @@ import {
 	Typography,
 	Box,
 	FormControl,
-	FormControlLabel,
-	Switch,
 	TextField,
 	Button,
 	InputLabel,
 	MenuItem,
 	Select,
-	FormGroup,
 	Paper,
 } from "@material-ui/core"
 import { makeStyles } from '@material-ui/core/styles'
@@ -41,7 +38,8 @@ const useStyles: any = makeStyles((theme) => ({
 	},
 	paperForForm: {
 		width: '100%',
-		padding: 20
+		padding: 20,
+		marginBottom: 20,
 	},
 }))
 
@@ -62,7 +60,6 @@ const FindingDetailsAdmin = () => {
 	const [showNewTheme, setShowNewTheme] = useState<boolean>(false)
 	const [newTheme, setNewTheme] = useState<FindingTheme | undefined>()
 	const { enqueueSnackbar } = useSnackbar()
-	const [anotherNewFinding, setAnotherNewFinding] = useState<boolean>(false)
 
 	const onChangeNewTheme = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
 		setNewTheme({
@@ -145,16 +142,7 @@ const FindingDetailsAdmin = () => {
 					variant: 'success',
 				})
 			}
-			if (!anotherNewFinding) {
-				history.push("/findingsoverview")
-			} else {
-				const newFinding: Finding = {
-					description: '',
-					type: FindingType.Bug
-				}
-				if (finding?.theme) newFinding.theme = finding.theme
-				setFinding(newFinding)
-			}
+			history.push("/findingsoverview")
 		} catch (error) {
 			enqueueSnackbar('Er is helaas iets mis gegaan bij het opslaan van de bevinding.', {
 				variant: 'error',
@@ -444,28 +432,6 @@ const FindingDetailsAdmin = () => {
 					</Box>
 				</Box>
 			</Paper>
-			<Box
-				display="flex"
-				flexDirection="column"
-				justifyContent="center"
-				alignItems="flex-end"
-				width="100%"
-				my={2}
-			>
-				<FormGroup row>
-					<FormControlLabel
-						control={
-							<Switch
-								checked={anotherNewFinding}
-								onChange={() => setAnotherNewFinding(!anotherNewFinding)}
-								name="anotherNewFinding"
-								color="primary"
-							/>
-						}
-						label="Nog een bevinding toevoegen"
-					/>
-				</FormGroup>
-			</Box>
 			<Paper className={classes.paperForForm}>
 				<Box
 					display="flex"

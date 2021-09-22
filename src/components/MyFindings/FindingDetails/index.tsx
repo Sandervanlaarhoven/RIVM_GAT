@@ -122,10 +122,15 @@ const FindingDetails = () => {
 			} else {
 				const newFinding: Finding = {
 					description: '',
-					type: FindingType.Bug
+					type: FindingType.Bug,
+					status: Status.Open,
+					testDate: new Date(),
+					uid: app.currentUser.id,
+					userEmail: app.currentUser.profile?.email || "Onbekend",
 				}
 				if (finding?.theme) newFinding.theme = finding.theme
 				setFinding(newFinding)
+				history.push("/findings/new")
 			}
 		} catch (error) {
 			enqueueSnackbar('Er is helaas iets mis gegaan bij het opslaan van de bevinding.', {
