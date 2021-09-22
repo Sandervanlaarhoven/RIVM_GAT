@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import { List, ListItem, ListItemText, Box, ListItemIcon } from "@material-ui/core"
 import ListIcon from "@material-ui/icons/List"
 import PlaylistAddIcon from "@material-ui/icons/PlaylistAdd"
+import SettingsIcon from "@material-ui/icons/Settings"
 import { useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -81,6 +82,15 @@ const SideBar: React.FC<IProps> = () => {
 						<ListItemIcon><ListIcon /></ListItemIcon>
 						<ListItemText
 							primary='Beheren bevindingen'
+						/>
+					</ListItem>}
+					{hasTestCoordinatorRole && <ListItem
+						button
+						onClick={() => navigate('/settings')}
+					>
+						<ListItemIcon><SettingsIcon /></ListItemIcon>
+						<ListItemText
+							primary='Instellingen en masterdata'
 						/>
 					</ListItem>}
 				</List>

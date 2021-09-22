@@ -47,7 +47,10 @@ interface params {
 	id: string
 }
 
-const FindingDetailsAdmin = () => {
+interface IProps {
+}
+
+const FindingDetailsAdmin: React.FC<IProps> = () => {
 	const classes = useStyles()
 	const app = useRealmApp()
 	const history = useHistory()

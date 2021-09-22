@@ -18,6 +18,7 @@ import MyFindings from '../MyFindings'
 import FindingDetails from '../MyFindings/FindingDetails'
 import FindingsOverview from '../FindingsOverview/index';
 import FindingDetailsAdmin from '../FindingsOverview/FindingDetails/index';
+import Settings from '../Settings'
 
 const REALM_APP_ID = "rivm_gat-lkoaf"
 
@@ -88,6 +89,15 @@ const App = () => {
               <Framework>
                 <RequireRole role={Role.test_coordinator}>
                   <FindingDetailsAdmin />
+                </RequireRole>
+              </Framework>
+            </RequireLoggedInUser>
+          </Route>
+          <Route exact path="/settings">
+            <RequireLoggedInUser>
+              <Framework>
+                <RequireRole role={Role.test_coordinator}>
+                  <Settings />
                 </RequireRole>
               </Framework>
             </RequireLoggedInUser>
