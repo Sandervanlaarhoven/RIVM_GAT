@@ -89,9 +89,11 @@ const LogIn = () => {
 	const login = async () => {
 		if (emailValid && passwordValid) {
 			const isRIVMEmployee = credentials.email.trim().endsWith('@rivm.nl')
+			const isWhitelisted = credentials.email.trim().endsWith('@Isala.nl') || credentials.email.trim().endsWith('@Etz.nl') || credentials.email.trim().endsWith('@Amsterdamumc.nl') || credentials.email.trim().endsWith('@Ysl.nl')
 			const isSander = credentials.email.trim().endsWith('sandervanlaarhoven@gmail.com')
-			if (!isRIVMEmployee && !isSander) {
-				enqueueSnackbar('Alleen werknemers van het RIVM mogen deelnemen aan de vragenlijsten.', {
+
+			if (!isRIVMEmployee && !isSander && !isWhitelisted) {
+				enqueueSnackbar('Alleen gebruikers van het NHS LIMS mogen deelnemen aan de GAT testen.', {
 					variant: 'error',
 				})
 				return
@@ -110,9 +112,10 @@ const LogIn = () => {
 	const register = async () => {
 		if (emailValid && passwordValid && validatePassWordCheck(credentials.password, credentials.passwordCheck)) {
 			const isRIVMEmployee = credentials.email.trim().endsWith('@rivm.nl')
+			const isWhitelisted = credentials.email.trim().endsWith('@Isala.nl') || credentials.email.trim().endsWith('@Etz.nl') || credentials.email.trim().endsWith('@Amsterdamumc.nl') || credentials.email.trim().endsWith('@Ysl.nl')
 			const isSander = credentials.email.trim().endsWith('sandervanlaarhoven@gmail.com')
-			if (!isRIVMEmployee && !isSander) {
-				enqueueSnackbar('Alleen werknemers van het RIVM mogen deelnemen aan de vragenlijsten.', {
+			if (!isRIVMEmployee && !isSander && !isWhitelisted) {
+				enqueueSnackbar('Alleen gebruikers van het NHS LIMS mogen deelnemen aan de GAT testen.', {
 					variant: 'error',
 				})
 				return
