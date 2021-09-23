@@ -63,3 +63,22 @@ export enum FindingFieldName {
 	findingTheme = 'theme',
 	userEmail = 'userEmail',
 }
+
+export type Link = {
+	name: string;
+	url: string;
+}
+
+export type Contact = {
+	email: string;
+	name: string;
+	role: string;
+	telephone_number: string;
+}
+
+export type Information = {
+	_id?: BSON.ObjectId;
+	text: string;
+	links: Link[];
+	contacts: Contact[]
+}
