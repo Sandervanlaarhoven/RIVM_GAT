@@ -61,4 +61,5 @@ export enum FindingFieldName {
 	description = 'description',
 	type = 'type',
 	findingTheme = 'theme',
+	userEmail = 'userEmail',
 }

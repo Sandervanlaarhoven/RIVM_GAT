@@ -43,6 +43,7 @@ interface IProps {
 
 type PropsFilter = {
 	theme?: string,
+	userEmail?: string,
 }
 
 const FindingsOverview: React.FC<IProps> = () => {
@@ -61,6 +62,7 @@ const FindingsOverview: React.FC<IProps> = () => {
 	const findingsDataState = useAppSelector(state => state.findingsData)
 	const { findings } = findingsDataState
 	const [currentTab, setCurrentTab] = React.useState(0);
+	const [userEmails, setUserEmails] = useState<string[]>([])
 
 	const getData = async () => {
 		try {
@@ -84,7 +86,7 @@ const FindingsOverview: React.FC<IProps> = () => {
 
 	useEffect(() => {
 		const filterTimeout = setTimeout(() => {
-			setfilteredFindings(findings.filter((finding) => {
+			const newFilteredFindings = findings.filter((finding) => {
 				let passedPropsFilter = true
 				if (propsFilter) {
 					if (propsFilter.theme && finding.theme !== propsFilter.theme) passedPropsFilter = false
@@ -116,11 +118,20 @@ const FindingsOverview: React.FC<IProps> = () => {
 						break
 				}
 				if (finding.status !== statusFilterValue) passedPropsFilter = false
+				if (propsFilter.userEmail && finding.userEmail !== propsFilter.userEmail) passedPropsFilter = false
 				return passedPropsFilter && (finding.description.toLowerCase().includes(filterString.toLowerCase()) || format(finding.testDate, 'Pp', { locale: nl }).includes(filterString.toLowerCase()))
-			}).sort((a, b) => b.testDate.valueOf() - a.testDate.valueOf()))
+			}).sort((a, b) => b.testDate.valueOf() - a.testDate.valueOf())
+			setUserEmailDropdownValues(newFilteredFindings)
+			setfilteredFindings(newFilteredFindings)
 		}, 500);
 		return () => clearTimeout(filterTimeout)
 	}, [filterString, propsFilter, findings, currentTab])
+
+	const setUserEmailDropdownValues = (findings: Finding[]) => {
+		const emailList = findings.map((finding) => finding.userEmail || 'onbekend')
+		const uniqueEmailList = Array.from(new Set(emailList))
+		setUserEmails(uniqueEmailList)
+	}
 
 	const VerbeteringFinding = (finding: Finding) => {
 		return <Box
@@ -284,6 +295,33 @@ const FindingsOverview: React.FC<IProps> = () => {
 					flexDirection="row"
 					alignItems="center"
 					justifyContent="flex-end"
+				>
+					<Box
+						display="flex"
+						flexDirection="row"
+						alignItems="center"
+						justifyContent="center"
+					>
+						<FormControl className={classes.formControl}>
+							<InputLabel id="type">Aanmelder</InputLabel>
+							<Select
+								labelId="type"
+								id="type"
+								value={propsFilter.userEmail || ''}
+								onChange={(event) => handleChangeSelect(event, FindingFieldName.userEmail)}
+							>
+								<MenuItem key="" value={''}>Alle gebruikers</MenuItem>
+								{userEmails.map((userEmail) => <MenuItem key={userEmail} value={userEmail}>{userEmail}</MenuItem>)}
+							</Select>
+						</FormControl>
+					</Box>
+				</Box>
+				<Box
+					display="flex"
+					flexDirection="row"
+					alignItems="center"
+					justifyContent="flex-end"
+					ml={2}
 				>
 					<Box
 						display="flex"
