@@ -16,7 +16,8 @@ import { useSnackbar } from 'notistack'
 
 import { useRealmApp } from '../App/RealmApp'
 import { catitaliseFirstLetter } from '../utils'
-import { FindingTheme } from '../../types/index';
+import { FindingTheme, Information } from '../../types/index';
+import { BSON } from 'realm-web'
 
 const useStyles: any = makeStyles(() => ({
 	optionListItem: {
@@ -47,6 +48,8 @@ const Settings: React.FC<IProps> = () => {
 	const app = useRealmApp()
 	const mongo = app.currentUser.mongoClient("mongodb-atlas")
 	const mongoFindingThemesCollection = mongo.db("RIVM_GAT").collection("finding_themes")
+	const mongoInformationCollection = mongo.db("RIVM_GAT").collection("information")
+	const [information, setInformation] = useState<Information>()
 	const [findingThemes, setFindingThemes] = useState<FindingTheme[]>([])
 	const [showNewTheme, setShowNewTheme] = useState<boolean>(false)
 	const [newTheme, setNewTheme] = useState<FindingTheme | undefined>()
@@ -83,7 +86,10 @@ const Settings: React.FC<IProps> = () => {
 	const getData = async () => {
 		try {
 			let findingThemesDataRequest = mongoFindingThemesCollection.find()
+			const informationDataRequest = await mongoInformationCollection.find()
+			const info = informationDataRequest[0] || {}
 			setFindingThemes(await findingThemesDataRequest)
+			setInformation(info)
 		} catch (error) {
 			enqueueSnackbar('Er is helaas iets mis gegaan bij het ophalen van de gegevens.', {
 				variant: 'error',
@@ -96,7 +102,39 @@ const Settings: React.FC<IProps> = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
+	const handleChangeInformationTextField = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+		if (information) {
+			setInformation({
+				...information,
+				text: event.target.value
+			})
+		}
+	}
 
+	const saveInformationPage = async () => {
+		try {
+			if (information) {
+				const updatedInformation: Information = {
+					...information
+				}
+				delete updatedInformation._id
+				await mongoInformationCollection.updateOne({
+					_id: new BSON.ObjectId(information._id)
+				}, updatedInformation)
+				enqueueSnackbar('De informatiepagina is aangepast.', {
+					variant: 'success',
+				})
+			} else {
+				enqueueSnackbar('Er is helaas iets mis gegaan bij het opslaan van de informatiepagina.', {
+					variant: 'error',
+				})
+			}
+		} catch (error) {
+			enqueueSnackbar('Er is helaas iets mis gegaan bij het opslaan van de informatiepagina.', {
+				variant: 'error',
+			})
+		}
+	}
 
 	return (
 		<Box
@@ -201,6 +239,63 @@ const Settings: React.FC<IProps> = () => {
 						</Button>
 					</Box>
 				</Box>}
+			</Paper>
+			<Paper className={classes.paperForForm}>
+				<Box
+					display="flex"
+					flexDirection="row"
+					alignItems="center"
+					justifyContent="space-between"
+					width="100%"
+					pb={5}
+				>
+					<Box
+						display="flex"
+						flexDirection="column"
+						alignItems="flex-start"
+						justifyContent="center"
+					>
+						<Typography variant="h6">Informatiepagina</Typography>
+					</Box>
+					<Box
+						display="flex"
+						flexDirection="row"
+						alignItems="center"
+						justifyContent="flex-end"
+					>
+						<Button variant="contained" className={classes.button} color="primary" onClick={saveInformationPage}>
+							Opslaan
+						</Button>
+					</Box>
+				</Box>
+				<Box
+					display="flex"
+					flexDirection="row"
+					alignItems="center"
+					justifyContent="center"
+					width="100%"
+					pb={3}
+				>
+					<TextField
+						label="Algemene informatie"
+						value={information?.text || ''}
+						fullWidth
+						multiline
+						variant="outlined"
+						helperText="Dit is het stukje algemene informatie op de informatiepagina."
+						onChange={(event) => handleChangeInformationTextField(event)}
+					/>
+				</Box>
+				<Box
+					display="flex"
+					flexDirection="row"
+					alignItems="center"
+					justifyContent="center"
+					width="100%"
+					my={6}
+				>
+					<Typography variant="caption">TODO invoeren contactpersonen en links</Typography>
+				</Box>
 			</Paper>
 		</Box>
 	)
