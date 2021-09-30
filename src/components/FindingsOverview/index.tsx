@@ -375,7 +375,7 @@ const FindingsOverview: React.FC<IProps> = () => {
 						alignItems="flex-start"
 						justifyContent="center"
 						width="100%"
-						border={"1px solid grey"}
+						border={"1px solid rgba(0, 0, 0, 0.23)"}
 						borderRadius={11}
 						bgcolor="#FFF"
 						p={1}
