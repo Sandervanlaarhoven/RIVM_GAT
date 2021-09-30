@@ -552,16 +552,6 @@ const Settings: React.FC<IProps> = () => {
 						</ListItem>)}
 					</List>
 				</Box>
-				<Box
-					display="flex"
-					flexDirection="row"
-					alignItems="center"
-					justifyContent="center"
-					width="100%"
-					my={6}
-				>
-					<Typography variant="caption">TODO invoeren contactpersonen en links</Typography>
-				</Box>
 			</Paper>
 		</Box>
 	)
