@@ -135,11 +135,8 @@ const Settings: React.FC<IProps> = () => {
 		if (information) {
 			const newInformation = {
 				...information,
-				contacts: [
-					...information.contacts
-				]
+				contacts: information.contacts.slice(index)
 			}
-			delete newInformation.contacts[index]
 			setInformation(newInformation)
 		}
 	}
@@ -182,11 +179,8 @@ const Settings: React.FC<IProps> = () => {
 		if (information) {
 			const newInformation = {
 				...information,
-				links: [
-					...information.links
-				]
+				links: information.links.slice(index)
 			}
-			delete newInformation.links[index]
 			setInformation(newInformation)
 		}
 	}
