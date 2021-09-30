@@ -135,8 +135,11 @@ const Settings: React.FC<IProps> = () => {
 		if (information) {
 			const newInformation = {
 				...information,
-				contacts: information.contacts.slice(index)
+				contacts: [
+					...information.contacts
+				]
 			}
+			newInformation.contacts.splice(index, 1)
 			setInformation(newInformation)
 		}
 	}
@@ -179,8 +182,11 @@ const Settings: React.FC<IProps> = () => {
 		if (information) {
 			const newInformation = {
 				...information,
-				links: information.links.slice(index)
+				links: [
+					...information.links
+				]
 			}
+			newInformation.links.splice(index, 1)
 			setInformation(newInformation)
 		}
 	}
@@ -425,11 +431,13 @@ const Settings: React.FC<IProps> = () => {
 								<TextField
 									label="Naam"
 									value={link.name}
+									helperText="De weergavetekst voor de link"
 									onChange={(event) => handleChangeLinkTextField(event, index, 'name')}
 								/>
 								<TextField
-									label="Rol"
+									label="URL"
 									value={link.url}
+									helperText="Dit is de link zonder http:// of https://"
 									onChange={(event) => handleChangeLinkTextField(event, index, 'url')}
 								/>
 								<IconButton edge="end" aria-label="delete" onClick={() => handleDeleteLink(index)}>
