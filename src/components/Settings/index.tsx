@@ -2,12 +2,8 @@ import React, { useEffect, useState } from 'react'
 import {
 	Typography,
 	Box,
-	FormControl,
 	TextField,
 	Button,
-	InputLabel,
-	MenuItem,
-	Select,
 	Paper,
 	List,
 	IconButton,
@@ -207,6 +203,21 @@ const Settings: React.FC<IProps> = () => {
 		}
 	}
 
+	const handleDeleteTheme = async (id: BSON.ObjectId | undefined) => {
+		if (id) {
+			try {
+				await mongoFindingThemesCollection.deleteOne({
+					_id: new BSON.ObjectId(id)
+				})
+				setFindingThemes(findingThemes.filter((findingTheme) => findingTheme._id !== id))
+			} catch (error) {
+				enqueueSnackbar('Er is helaas iets mis gegaan bij het verwijderen van het thema.', {
+					variant: 'error',
+				})
+			}
+		}
+	}
+
 	const saveInformationPage = async () => {
 		try {
 			if (information) {
@@ -260,43 +271,33 @@ const Settings: React.FC<IProps> = () => {
 				</Box>
 			</Box>
 			<Paper className={classes.paperForForm}>
-				{!showNewTheme && <Box
+				<Box
 					display="flex"
 					flexDirection="row"
 					alignItems="center"
-					justifyContent="flex-start"
+					justifyContent="space-between"
 					width="100%"
 					pb={3}
 				>
 					<Box
 						display="flex"
-						flexDirection="row"
-						alignItems="center"
+						flexDirection="column"
+						alignItems="flex-start"
 						justifyContent="center"
 					>
-						<FormControl className={classes.formControl}>
-							<InputLabel id="type">Thema</InputLabel>
-							<Select
-								labelId="type"
-								id="type"
-								value=""
-							>
-								<MenuItem key="" value={''}>Geen specifiek thema</MenuItem>
-								{findingThemes.map((findingTheme) => <MenuItem key={findingTheme.name} value={findingTheme.name}>{findingTheme.name}</MenuItem>)}
-							</Select>
-						</FormControl>
+						<Typography variant="h6">Thema's</Typography>
 					</Box>
 					<Box
 						display="flex"
 						flexDirection="row"
 						alignItems="center"
-						justifyContent="center"
+						justifyContent="flex-end"
 					>
 						<Button startIcon={<AddIcon />} variant="outlined" className={classes.button} color="primary" onClick={() => setShowNewTheme(true)}>
-							Nieuw thema
+							Thema toevoegen
 						</Button>
 					</Box>
-				</Box>}
+				</Box>
 				{showNewTheme && <Box
 					display="flex"
 					flexDirection="row"
@@ -335,6 +336,37 @@ const Settings: React.FC<IProps> = () => {
 						</Button>
 					</Box>
 				</Box>}
+				<Box
+					display="flex"
+					flexDirection="row"
+					alignItems="center"
+					justifyContent="flex-start"
+					width="100%"
+					pb={3}
+				>
+					<List>
+						{findingThemes.map((findingTheme: FindingTheme, index: number) => <ListItem key={findingTheme._id?.toString() || index}>
+							<Box
+								display="flex"
+								flexDirection="row"
+								alignItems="center"
+								justifyContent="space-between"
+								border="1px solid rgba(0, 0, 0, 0.23)"
+								borderRadius="8px"
+								minWidth="200px"
+							>
+								<Box px={2}>
+									<Typography variant="body2">{findingTheme.name}</Typography>
+								</Box>
+								<Box px={1}>
+									<IconButton edge="end" aria-label="delete" onClick={() => handleDeleteTheme(findingTheme._id)}>
+										<DeleteIcon />
+									</IconButton>
+								</Box>
+							</Box>
+						</ListItem>)}
+					</List>
+				</Box>
 			</Paper>
 			<Paper className={classes.paperForForm}>
 				<Box
