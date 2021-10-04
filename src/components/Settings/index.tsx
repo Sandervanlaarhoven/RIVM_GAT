@@ -469,7 +469,7 @@ const Settings: React.FC<IProps> = () => {
 								<TextField
 									label="URL"
 									value={link.url}
-									helperText="Dit is de link zonder http:// of https://"
+									helperText="Dit is de link inclusief http:// of https://"
 									onChange={(event) => handleChangeLinkTextField(event, index, 'url')}
 								/>
 								<IconButton edge="end" aria-label="delete" onClick={() => handleDeleteLink(index)}>
