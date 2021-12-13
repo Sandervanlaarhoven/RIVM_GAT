@@ -51,6 +51,7 @@ export type Finding = {
 	userEmail?: string;
 	type: FindingType;
 	description: string;
+	featureRequestDescription?: string;
 	expectedResult?: string;
 	actualResult?: string;
 	additionalInfo?: string;

@@ -43,6 +43,9 @@ const useStyles: any = makeStyles((theme) => ({
 		width: '100%',
 		padding: 20
 	},
+	greyedOutText: {
+		color: 'grey'
+	},
 }))
 
 interface params {
@@ -98,6 +101,16 @@ const FindingDetails = () => {
 		history.goBack()
 	}
 
+	const wasInitiallyEnteredAsBug = () => {
+		let wasBug = false
+		if (finding?.expectedResult) wasBug = true
+		if (finding?.additionalInfo) wasBug = true
+		if (finding?.actualResult) wasBug = true
+		if (finding?.browser) wasBug = true
+		if (finding?.theme) wasBug = true
+		return wasBug
+	}
+
 	const save = async () => {
 		try {
 			if (id && finding) {
@@ -150,6 +163,7 @@ const FindingDetails = () => {
 		status = 'status',
 		feedbackDeveloper = 'feedbackDeveloper',
 		feedbackToGATUser = 'feedbackToGATUser',
+		featureRequestDescription = 'featureRequestDescription',
 	}
 
 	const handleChangeTextField = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, fieldName: FindingFieldName) => {
@@ -263,119 +277,171 @@ const FindingDetails = () => {
 						</Select>
 					</FormControl>
 				</Box>
-				<Box
-					display="flex"
-					flexDirection="row"
-					alignItems="center"
-					justifyContent="flex-start"
-					width="100%"
-					pb={3}
-				>
+				{finding?.type === FindingType.Verbetering &&
 					<Box
 						display="flex"
 						flexDirection="row"
 						alignItems="center"
 						justifyContent="center"
+						width="100%"
+						pb={3}
 					>
-						<FormControl className={classes.formControl}>
-							<InputLabel id="type">Thema</InputLabel>
-							<Select
-								labelId="type"
-								id="type"
-								value={finding?.theme || ''}
-								onChange={(event) => handleChangeSelect(event, FindingFieldName.findingTheme)}
-							>
-								<MenuItem key="" value={''}>Geen specifiek thema</MenuItem>
-								{findingThemes.map((findingTheme) => <MenuItem key={findingTheme.name} value={findingTheme.name}>{findingTheme.name}</MenuItem>)}
-							</Select>
-						</FormControl>
+						<TextField
+							label="Beschrijving"
+							value={finding?.featureRequestDescription || ''}
+							fullWidth
+							variant="outlined"
+							onChange={(event) => handleChangeTextField(event, FindingFieldName.featureRequestDescription)}
+							helperText="Beschrijf zo goed mogelijk wat je graag zou willen verbeteren in de applicatie"
+						/>
 					</Box>
-				</Box>
-				<Box
-					display="flex"
-					flexDirection="row"
-					alignItems="center"
-					justifyContent="center"
-					width="100%"
-					pb={3}
-				>
-					<TextField
-						label="Verwachte uitkomst"
-						value={finding?.expectedResult || ''}
-						fullWidth
-						variant="outlined"
-						multiline
-						onChange={(event) => handleChangeTextField(event, FindingFieldName.expectedResult)}
-						helperText="Schrijf hier in stappen uit wat je getest hebt en met welke data"
-					/>
-				</Box>
-				<Box
-					display="flex"
-					flexDirection="row"
-					alignItems="center"
-					justifyContent="center"
-					width="100%"
-					pb={3}
-				>
-					<TextField
-						label="Daadwerkelijke uitkomst"
-						value={finding?.actualResult || ''}
-						fullWidth
-						multiline
-						variant="outlined"
-						onChange={(event) => handleChangeTextField(event, FindingFieldName.actualResult)}
-						helperText="Schrijf hier in stappen uit wat de daadwerkelijke uitkomst was en waarom dit niet aan je verwachting voldoet"
-					/>
-				</Box>
-				<Box
-					display="flex"
-					flexDirection="row"
-					alignItems="center"
-					justifyContent="center"
-					width="100%"
-					pb={3}
-				>
-					<TextField
-						label="Extra informatie"
-						value={finding?.additionalInfo || ''}
-						fullWidth
-						multiline
-						variant="outlined"
-						onChange={(event) => handleChangeTextField(event, FindingFieldName.additionalInfo)}
-						helperText="Testdata / specifieke rollen, rechten"
-					/>
-				</Box>
-				<Box
-					display="flex"
-					flexDirection="row"
-					alignItems="center"
-					justifyContent="flex-start"
-					width="100%"
-					pb={3}
-				>
+				}
+				{finding?.type === FindingType.Bug && finding?.featureRequestDescription && <>
+					<Box
+						display="flex"
+						flexDirection="column"
+						alignItems="flex-start"
+						justifyContent="center"
+						width="100%"
+						pb={3}
+					>
+						<Typography className={classes.greyedOutText} variant="h6">Voorheen ingevoerd als verbetering</Typography>
+						<Typography className={classes.greyedOutText} variant="body2">Beschrijving: {finding?.featureRequestDescription || ''}</Typography>
+					</Box>
+				</>}
+				{finding?.type === FindingType.Verbetering && wasInitiallyEnteredAsBug() && <>
+					<Box
+						display="flex"
+						flexDirection="column"
+						alignItems="flex-start"
+						justifyContent="center"
+						width="100%"
+						pb={3}
+					>
+						<Typography className={classes.greyedOutText} variant="h6">Voorheen ingevoerd als Bug</Typography>
+						{finding?.theme && <Typography className={classes.greyedOutText} variant="body2">Thema: {finding?.theme}</Typography>}
+						{finding?.expectedResult && <Typography className={classes.greyedOutText} variant="body2">Verwachte uitkomst: {finding?.expectedResult}</Typography>}
+						{finding?.actualResult && <Typography className={classes.greyedOutText} variant="body2">Daadwerkelijke uitkomst: {finding?.actualResult}</Typography>}
+						{finding?.additionalInfo && <Typography className={classes.greyedOutText} variant="body2">Extra informatie: {finding?.additionalInfo}</Typography>}
+						{finding?.browser && <Typography className={classes.greyedOutText} variant="body2">Browser: {finding?.browser}</Typography>}
+					</Box>
+				</>}
+				{finding?.type === FindingType.Bug && <>
+					<Box
+						display="flex"
+						flexDirection="row"
+						alignItems="center"
+						justifyContent="flex-start"
+						width="100%"
+						pb={3}
+					>
+						<Box
+							display="flex"
+							flexDirection="row"
+							alignItems="center"
+							justifyContent="center"
+						>
+							<FormControl className={classes.formControl}>
+								<InputLabel id="type">Thema</InputLabel>
+								<Select
+									labelId="type"
+									id="type"
+									value={finding?.theme || ''}
+									onChange={(event) => handleChangeSelect(event, FindingFieldName.findingTheme)}
+								>
+									<MenuItem key="" value={''}>Geen specifiek thema</MenuItem>
+									{findingThemes.map((findingTheme) => <MenuItem key={findingTheme.name} value={findingTheme.name}>{findingTheme.name}</MenuItem>)}
+								</Select>
+							</FormControl>
+						</Box>
+					</Box>
 					<Box
 						display="flex"
 						flexDirection="row"
 						alignItems="center"
 						justifyContent="center"
+						width="100%"
+						pb={3}
 					>
-						<FormControl className={classes.formControl}>
-							<InputLabel id="browser">Browser</InputLabel>
-							<Select
-								labelId="browser"
-								id="browser"
-								value={finding?.browser || ''}
-								onChange={(event) => handleChangeSelect(event, FindingFieldName.browser)}
-							>
-								<MenuItem key="" value={''}>Kies de browser waarmee is getest</MenuItem>
-								<MenuItem key={Browser.Chrome} value={Browser.Chrome}>{Browser.Chrome}</MenuItem>
-								<MenuItem key={Browser.Edge} value={Browser.Edge}>{Browser.Edge}</MenuItem>
-								<MenuItem key={Browser.Firefox} value={Browser.Firefox}>{Browser.Firefox}</MenuItem>
-								<MenuItem key={Browser.InternetExplorer} value={Browser.InternetExplorer}>{Browser.InternetExplorer}</MenuItem>
-							</Select>
-						</FormControl>
+						<TextField
+							label="Verwachte uitkomst"
+							value={finding?.expectedResult || ''}
+							fullWidth
+							variant="outlined"
+							multiline
+							onChange={(event) => handleChangeTextField(event, FindingFieldName.expectedResult)}
+							helperText="Schrijf hier in stappen uit wat je getest hebt en met welke data"
+						/>
 					</Box>
-				</Box>
+					<Box
+						display="flex"
+						flexDirection="row"
+						alignItems="center"
+						justifyContent="center"
+						width="100%"
+						pb={3}
+					>
+						<TextField
+							label="Daadwerkelijke uitkomst"
+							value={finding?.actualResult || ''}
+							fullWidth
+							multiline
+							variant="outlined"
+							onChange={(event) => handleChangeTextField(event, FindingFieldName.actualResult)}
+							helperText="Schrijf hier in stappen uit wat de daadwerkelijke uitkomst was en waarom dit niet aan je verwachting voldoet"
+						/>
+					</Box>
+					<Box
+						display="flex"
+						flexDirection="row"
+						alignItems="center"
+						justifyContent="center"
+						width="100%"
+						pb={3}
+					>
+						<TextField
+							label="Extra informatie"
+							value={finding?.additionalInfo || ''}
+							fullWidth
+							multiline
+							variant="outlined"
+							onChange={(event) => handleChangeTextField(event, FindingFieldName.additionalInfo)}
+							helperText="Testdata / specifieke rollen, rechten"
+						/>
+					</Box>
+					<Box
+						display="flex"
+						flexDirection="row"
+						alignItems="center"
+						justifyContent="flex-start"
+						width="100%"
+						pb={3}
+					>
+						<Box
+							display="flex"
+							flexDirection="row"
+							alignItems="center"
+							justifyContent="center"
+						>
+							<FormControl className={classes.formControl}>
+								<InputLabel id="browser">Browser</InputLabel>
+								<Select
+									labelId="browser"
+									id="browser"
+									value={finding?.browser || ''}
+									onChange={(event) => handleChangeSelect(event, FindingFieldName.browser)}
+								>
+									<MenuItem key="" value={''}>Kies de browser waarmee is getest</MenuItem>
+									<MenuItem key={Browser.Chrome} value={Browser.Chrome}>{Browser.Chrome}</MenuItem>
+									<MenuItem key={Browser.Edge} value={Browser.Edge}>{Browser.Edge}</MenuItem>
+									<MenuItem key={Browser.Firefox} value={Browser.Firefox}>{Browser.Firefox}</MenuItem>
+									<MenuItem key={Browser.InternetExplorer} value={Browser.InternetExplorer}>{Browser.InternetExplorer}</MenuItem>
+								</Select>
+							</FormControl>
+						</Box>
+					</Box>
+				</>
+				}
 				<Box
 					display="flex"
 					flexDirection="row"
