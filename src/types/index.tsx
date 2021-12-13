@@ -2,6 +2,7 @@ import { BSON } from "realm-web";
 
 export enum Role {
 	test_coordinator = "test_coordinator",
+	product_owner = "product_owner",
 }
 
 export type UserData = {
@@ -54,6 +55,7 @@ export type Finding = {
 	status?: Status;
 	feedbackDeveloper?: string;
 	feedbackToGATUser?: string;
+	feedbackProductOwner?: string;
 	testDate: Date;
 }
 

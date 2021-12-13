@@ -24,6 +24,7 @@ const SideBar: React.FC<IProps> = () => {
 	const userDataState = useSelector((state: RootState) => state.userData)
 	const { userData, loading } = userDataState
 	const hasTestCoordinatorRole = !loading && userData && userData.roles?.find((el) => el === Role.test_coordinator)
+	const hasProductOwnerRole = !loading && userData && userData.roles?.find((el) => el === Role.product_owner)
 
 	const navigate = (target: string) => {
 		history.push(target)
@@ -83,6 +84,15 @@ const SideBar: React.FC<IProps> = () => {
 						<ListItemIcon><ListIcon /></ListItemIcon>
 						<ListItemText
 							primary='Beheren bevindingen'
+						/>
+					</ListItem>}
+					{hasProductOwnerRole && <ListItem
+						button
+						onClick={() => navigate('/productowneroverview')}
+					>
+						<ListItemIcon><ListIcon /></ListItemIcon>
+						<ListItemText
+							primary='Product owner overzicht'
 						/>
 					</ListItem>}
 					{hasTestCoordinatorRole && <ListItem

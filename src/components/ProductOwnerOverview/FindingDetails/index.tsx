@@ -50,7 +50,7 @@ interface params {
 interface IProps {
 }
 
-const FindingDetailsAdmin: React.FC<IProps> = () => {
+const FindingDetailsPO: React.FC<IProps> = () => {
 	const classes = useStyles()
 	const app = useRealmApp()
 	const history = useHistory()
@@ -145,7 +145,7 @@ const FindingDetailsAdmin: React.FC<IProps> = () => {
 					variant: 'success',
 				})
 			}
-			history.push("/findingsoverview")
+			history.push("/productowneroverview")
 		} catch (error) {
 			enqueueSnackbar('Er is helaas iets mis gegaan bij het opslaan van de bevinding.', {
 				variant: 'error',
@@ -487,41 +487,6 @@ const FindingDetailsAdmin: React.FC<IProps> = () => {
 					my={3}
 				>
 					<TextField
-						label="Terugkoppeling van de ontwikkelaar"
-						value={finding?.feedbackDeveloper || ''}
-						multiline
-						fullWidth
-						variant="outlined"
-						onChange={(event) => handleChangeTextField(event, FindingFieldName.feedbackDeveloper)}
-					/>
-				</Box>
-				<Box
-					display="flex"
-					flexDirection="row"
-					alignItems="center"
-					justifyContent="center"
-					width="100%"
-					my={3}
-				>
-					<TextField
-						label="Terugkoppeling van de testcoördinator"
-						value={finding?.feedbackToGATUser || ''}
-						multiline
-						fullWidth
-						variant="outlined"
-						onChange={(event) => handleChangeTextField(event, FindingFieldName.feedbackToGATUser)}
-						helperText="Terugkoppeling van de testcoördinator naar de GAT tester"
-					/>
-				</Box>
-				<Box
-					display="flex"
-					flexDirection="row"
-					alignItems="center"
-					justifyContent="center"
-					width="100%"
-					my={3}
-				>
-					<TextField
 						label="Terugkoppeling van de product owner"
 						value={finding?.feedbackProductOwner || ''}
 						multiline
@@ -535,4 +500,4 @@ const FindingDetailsAdmin: React.FC<IProps> = () => {
 	)
 }
 
-export default FindingDetailsAdmin
+export default FindingDetailsPO

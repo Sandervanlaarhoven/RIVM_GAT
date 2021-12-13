@@ -20,6 +20,8 @@ import FindingsOverview from '../FindingsOverview/index';
 import FindingDetailsAdmin from '../FindingsOverview/FindingDetails/index';
 import Settings from '../Settings'
 import InformationPage from '../Information'
+import ProductOwnerOverview from '../ProductOwnerOverview'
+import FindingDetailsPO from '../ProductOwnerOverview/FindingDetails'
 
 const REALM_APP_ID = "rivm_gat-lkoaf"
 
@@ -90,6 +92,24 @@ const App = () => {
               <Framework>
                 <RequireRole role={Role.test_coordinator}>
                   <FindingDetailsAdmin />
+                </RequireRole>
+              </Framework>
+            </RequireLoggedInUser>
+          </Route>
+          <Route exact path="/productowneroverview">
+            <RequireLoggedInUser>
+              <Framework>
+                <RequireRole role={Role.product_owner}>
+                  <ProductOwnerOverview />
+                </RequireRole>
+              </Framework>
+            </RequireLoggedInUser>
+          </Route>
+          <Route exact path="/productowneroverview/:id">
+            <RequireLoggedInUser>
+              <Framework>
+                <RequireRole role={Role.product_owner}>
+                  <FindingDetailsPO />
                 </RequireRole>
               </Framework>
             </RequireLoggedInUser>
