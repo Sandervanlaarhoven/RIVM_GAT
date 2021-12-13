@@ -183,11 +183,15 @@ const FindingDetailsPO: React.FC<IProps> = () => {
 
 	const handleChangeSelect = (event: React.ChangeEvent<selectEventProps>, fieldName: FindingFieldName) => {
 		if (finding) {
-			setFinding({
+			let newFinding = {
 				...finding,
 				[fieldName]: event.target.value
-			})
-		}
+			}
+			if (fieldName === FindingFieldName.type) {
+				newFinding.status = Status.Open
+			}
+			setFinding(newFinding)
+	}
 	}
 
 	return (
@@ -470,10 +474,11 @@ const FindingDetailsPO: React.FC<IProps> = () => {
 								onChange={(event) => handleChangeSelect(event, FindingFieldName.status)}
 							>
 								<MenuItem key={Status.Open} value={Status.Open}>{Status.Open}</MenuItem>
-								<MenuItem key={Status.Geverifieerd} value={Status.Geverifieerd}>{Status.Geverifieerd}</MenuItem>
+								<MenuItem key={Status.InOverweging} value={Status.InOverweging}>{Status.InOverweging}</MenuItem>
+								<MenuItem key={Status.Backlog} value={Status.Backlog}>{Status.Backlog}</MenuItem>
+								<MenuItem key={Status.Gepland} value={Status.Gepland}>{Status.Gepland}</MenuItem>
 								<MenuItem key={Status.Afgewezen} value={Status.Afgewezen}>{Status.Afgewezen}</MenuItem>
-								<MenuItem key={Status.Hertest} value={Status.Hertest}>{Status.Hertest}</MenuItem>
-								<MenuItem key={Status.Gesloten} value={Status.Gesloten}>{Status.Gesloten}</MenuItem>
+								<MenuItem key={Status.Geimplementeerd} value={Status.Geimplementeerd}>{Status.Geimplementeerd}</MenuItem>
 							</Select>
 						</FormControl>
 					</Box>

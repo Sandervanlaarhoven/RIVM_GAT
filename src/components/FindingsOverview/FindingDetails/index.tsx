@@ -183,10 +183,14 @@ const FindingDetailsAdmin: React.FC<IProps> = () => {
 
 	const handleChangeSelect = (event: React.ChangeEvent<selectEventProps>, fieldName: FindingFieldName) => {
 		if (finding) {
-			setFinding({
+			let newFinding = {
 				...finding,
 				[fieldName]: event.target.value
-			})
+			}
+			if (fieldName === FindingFieldName.type) {
+				newFinding.status = Status.Open
+			}
+			setFinding(newFinding)
 		}
 	}
 

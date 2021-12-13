@@ -100,19 +100,23 @@ const ProductOwnerOverview: React.FC<IProps> = () => {
 						break
 					}
 					case 1: {
-						statusFilterValue = Status.Geverifieerd
+						statusFilterValue = Status.InOverweging
 						break
 					}
 					case 2: {
-						statusFilterValue = Status.Afgewezen
+						statusFilterValue = Status.Backlog
 						break
 					}
 					case 3: {
-						statusFilterValue = Status.Hertest
+						statusFilterValue = Status.Gepland
 						break
 					}
 					case 4: {
-						statusFilterValue = Status.Gesloten
+						statusFilterValue = Status.Afgewezen
+						break
+					}
+					case 5: {
+						statusFilterValue = Status.Geimplementeerd
 						break
 					}
 
@@ -348,10 +352,11 @@ const ProductOwnerOverview: React.FC<IProps> = () => {
 			</Box>
 			<Tabs value={currentTab} onChange={handleChangeTab} indicatorColor="primary">
 				<Tab label={Status.Open} />
-				<Tab label={Status.Geverifieerd} />
+				<Tab label={Status.InOverweging} />
+				<Tab label={Status.Backlog} />
+				<Tab label={Status.Gepland} />
 				<Tab label={Status.Afgewezen} />
-				<Tab label={Status.Hertest} />
-				<Tab label={Status.Gesloten} />
+				<Tab label={Status.Geimplementeerd} />
 			</Tabs>
 			<Box
 				display="flex"

@@ -32,6 +32,10 @@ export enum Status {
 	Hertest = 'hertest',
 	Gesloten = 'gesloten',
 	Afgewezen = 'afgewezen',
+	InOverweging = 'in overweging',
+	Backlog = 'toegevoegd aan de backlog',
+	Gepland = 'ingepland',
+	Geimplementeerd = 'geïmplementeerd',
 }
 
 export enum Browser {
