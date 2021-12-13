@@ -82,14 +82,25 @@ const ManageFindings: React.FC<IProps> = () => {
 	useEffect(() => {
 		const filterTimeout = setTimeout(() => {
 			setfilteredFindings(findings.filter((finding) => {
+				let isGesloten: boolean = false
+				switch (finding.status) {
+					case Status.Gesloten:
+					case Status.Geimplementeerd:
+					case Status.Afgewezen:
+						isGesloten = true
+						break;
+				
+					default:
+						break;
+				}
 				let passedPropsFilter = true
 				if (propsFilter) {
 					if (propsFilter.theme && finding.theme !== propsFilter.theme) {
 						passedPropsFilter = false
 					}
 				}
-				if (finding.status !== Status.Gesloten && currentTab === 1) passedPropsFilter = false
-				if (finding.status === Status.Gesloten && currentTab === 0) passedPropsFilter = false
+				if (!isGesloten && currentTab === 1) passedPropsFilter = false
+				if (isGesloten && currentTab === 0) passedPropsFilter = false
 				return passedPropsFilter && (finding.description.toLowerCase().includes(filterString.toLowerCase()) || format(finding.testDate, 'Pp', { locale: nl }).includes(filterString.toLowerCase()))
 			}).sort((a, b) => b.testDate.valueOf() - a.testDate.valueOf()))
 		}, 500);

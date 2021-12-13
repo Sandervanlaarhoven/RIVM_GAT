@@ -472,6 +472,22 @@ const FindingDetails = () => {
 						variant="outlined"
 					/>
 				</Box>}
+				{finding?.feedbackProductOwner && <Box
+					display="flex"
+					flexDirection="row"
+					alignItems="center"
+					justifyContent="center"
+					width="100%"
+					my={3}
+				>
+					<TextField
+						label="Terugkoppeling van de product owner"
+						value={finding?.feedbackProductOwner || ''}
+						fullWidth
+						multiline
+						variant="outlined"
+					/>
+				</Box>}
 			</Paper>
 		</Box>
 	)

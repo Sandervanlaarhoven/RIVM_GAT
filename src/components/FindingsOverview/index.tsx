@@ -91,33 +91,33 @@ const FindingsOverview: React.FC<IProps> = () => {
 				if (propsFilter) {
 					if (propsFilter.theme && finding.theme !== propsFilter.theme) passedPropsFilter = false
 				}
-				let statusFilterValue = Status.Open
 				switch (currentTab) {
 					case 0: {
-						statusFilterValue = Status.Open
+						passedPropsFilter = finding.status === Status.Open
 						break
 					}
 					case 1: {
-						statusFilterValue = Status.Geverifieerd
+						passedPropsFilter = finding.status === Status.Geverifieerd && finding.type === FindingType.Bug
 						break
 					}
 					case 2: {
-						statusFilterValue = Status.Afgewezen
+						passedPropsFilter = finding.status === Status.Afgewezen && finding.type === FindingType.Bug
 						break
 					}
 					case 3: {
-						statusFilterValue = Status.Hertest
+						passedPropsFilter = finding.status === Status.Hertest && finding.type === FindingType.Bug
 						break
 					}
 					case 4: {
-						statusFilterValue = Status.Gesloten
+						passedPropsFilter = finding.status === Status.Gesloten && finding.type === FindingType.Bug
 						break
 					}
 
-					default:
+					default: {
+						passedPropsFilter = false
 						break
+					}
 				}
-				if (finding.status !== statusFilterValue) passedPropsFilter = false
 				if (propsFilter.userEmail && finding.userEmail !== propsFilter.userEmail) passedPropsFilter = false
 				return passedPropsFilter && (finding.description.toLowerCase().includes(filterString.toLowerCase()) || format(finding.testDate, 'Pp', { locale: nl }).includes(filterString.toLowerCase()))
 			}).sort((a, b) => b.testDate.valueOf() - a.testDate.valueOf())
@@ -359,6 +359,15 @@ const FindingsOverview: React.FC<IProps> = () => {
 				width="100%"
 				my={5}
 			>
+				{currentTab === 0 && <Box
+					display="flex"
+					flexDirection="column"
+					alignItems="flex-start"
+					justifyContent="center"
+					mb={2}
+				>
+					<Typography variant="body2"><i>In deze tab worden zowel verbeteringen als bugs getoond zodat deze nog kunnen worden beoordeeld door de testcoördinator.</i></Typography>
+				</Box>}
 				{filteredFindings.length === 0 && <Box
 					display="flex"
 					flexDirection="column"
