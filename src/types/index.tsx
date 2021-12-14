@@ -36,6 +36,7 @@ export enum Status {
 	Backlog = 'toegevoegd aan de backlog',
 	Gepland = 'ingepland',
 	Geimplementeerd = 'geïmplementeerd',
+	AllStatussus = 'alle statussen'
 }
 
 export enum Browser {

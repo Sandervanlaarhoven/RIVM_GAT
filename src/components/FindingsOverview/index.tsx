@@ -112,6 +112,10 @@ const FindingsOverview: React.FC<IProps> = () => {
 						passedPropsFilter = finding.status === Status.Gesloten && finding.type === FindingType.Bug
 						break
 					}
+					case 5: {
+						passedPropsFilter = finding.type === FindingType.Bug
+						break
+					}
 
 					default: {
 						passedPropsFilter = false
@@ -350,6 +354,7 @@ const FindingsOverview: React.FC<IProps> = () => {
 				<Tab label={Status.Afgewezen} />
 				<Tab label={Status.Hertest} />
 				<Tab label={Status.Gesloten} />
+				<Tab label={Status.AllStatussus} />
 			</Tabs>
 			<Box
 				display="flex"

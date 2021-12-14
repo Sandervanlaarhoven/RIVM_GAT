@@ -119,11 +119,15 @@ const ProductOwnerOverview: React.FC<IProps> = () => {
 						statusFilterValue = Status.Geimplementeerd
 						break
 					}
+					case 6: {
+						statusFilterValue = Status.AllStatussus
+						break
+					}
 
 					default:
 						break
 				}
-				if (finding.status !== statusFilterValue) passedPropsFilter = false
+				if (finding.status !== statusFilterValue && statusFilterValue !== Status.AllStatussus) passedPropsFilter = false
 				if (propsFilter.userEmail && finding.userEmail !== propsFilter.userEmail) passedPropsFilter = false
 				return passedPropsFilter && (finding.description.toLowerCase().includes(filterString.toLowerCase()) || format(finding.testDate, 'Pp', { locale: nl }).includes(filterString.toLowerCase()))
 			}).sort((a, b) => b.testDate.valueOf() - a.testDate.valueOf())
@@ -357,6 +361,7 @@ const ProductOwnerOverview: React.FC<IProps> = () => {
 				<Tab label={Status.Gepland} />
 				<Tab label={Status.Afgewezen} />
 				<Tab label={Status.Geimplementeerd} />
+				<Tab label={Status.AllStatussus} />
 			</Tabs>
 			<Box
 				display="flex"
