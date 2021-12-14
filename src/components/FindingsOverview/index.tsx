@@ -101,11 +101,11 @@ const FindingsOverview: React.FC<IProps> = () => {
 						break
 					}
 					case 2: {
-						passedPropsFilter = finding.status === Status.Afgewezen && finding.type === FindingType.Bug
+						passedPropsFilter = finding.status === Status.Hertest && finding.type === FindingType.Bug
 						break
 					}
 					case 3: {
-						passedPropsFilter = finding.status === Status.Hertest && finding.type === FindingType.Bug
+						passedPropsFilter = finding.status === Status.Afgewezen && finding.type === FindingType.Bug
 						break
 					}
 					case 4: {
@@ -351,8 +351,8 @@ const FindingsOverview: React.FC<IProps> = () => {
 			<Tabs value={currentTab} onChange={handleChangeTab} indicatorColor="primary">
 				<Tab label={Status.Open} />
 				<Tab label={Status.Geverifieerd} />
-				<Tab label={Status.Afgewezen} />
 				<Tab label={Status.Hertest} />
+				<Tab label={Status.Afgewezen} />
 				<Tab label={Status.Gesloten} />
 				<Tab label={Status.AllStatussus} />
 			</Tabs>
