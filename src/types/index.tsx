@@ -46,6 +46,32 @@ export enum Browser {
 	InternetExplorer = 'Internet Explorer',
 }
 
+export type FindingData = {
+	_id?: BSON.ObjectId;
+	uid?: BSON.ObjectId;
+	userEmail?: string;
+	type: FindingType;
+	description: string;
+	featureRequestDescription?: string;
+	expectedResult?: string;
+	actualResult?: string;
+	additionalInfo?: string;
+	browser?: Browser[];
+	theme?: string;
+	status?: Status;
+	feedbackDeveloper?: string;
+	feedbackToGATUser?: string;
+	feedbackProductOwner?: string;
+	testDate: Date;
+	history?: HistoryElement[];
+}
+
+export type HistoryElement = {
+	createdBy: User;
+	createdOn: Date;
+	finding: FindingData;
+}
+
 export type Finding = {
 	_id?: BSON.ObjectId;
 	uid?: BSON.ObjectId;
@@ -63,6 +89,7 @@ export type Finding = {
 	feedbackToGATUser?: string;
 	feedbackProductOwner?: string;
 	testDate: Date;
+	history: HistoryElement[];
 }
 
 export enum FindingFieldName {

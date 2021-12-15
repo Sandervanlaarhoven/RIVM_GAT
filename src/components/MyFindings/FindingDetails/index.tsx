@@ -22,7 +22,7 @@ import { BSON } from 'realm-web'
 import { useRealmApp } from '../../App/RealmApp'
 import { Browser, Finding, FindingType, Status } from '../../../types'
 import { catitaliseFirstLetter } from '../../utils'
-import { FindingTheme } from '../../../types/index';
+import { FindingTheme, FindingData } from '../../../types/index';
 import { format } from 'date-fns'
 import { nl } from 'date-fns/locale'
 
@@ -74,6 +74,7 @@ const FindingDetails = () => {
 				testDate: new Date(),
 				uid: app.currentUser.id,
 				userEmail: app.currentUser.profile?.email || "Onbekend",
+				history: [],
 			}
 			let findingThemesDataRequest = mongoFindingThemesCollection.find()
 			if (id) {
@@ -115,8 +116,21 @@ const FindingDetails = () => {
 		try {
 			if (id && finding) {
 				const updatedFinding: Finding = {
-					...finding
+					...finding,
 				}
+				const findingData: FindingData = {
+					...updatedFinding
+				}
+				delete findingData.history
+				delete findingData._id
+				updatedFinding.history.push({
+					finding: findingData,
+					createdOn: new Date(),
+					createdBy: {
+						_id: app.currentUser.id,
+						email: app.currentUser.profile?.email || "Onbekend",
+					}
+				})
 				delete updatedFinding._id
 				await mongoFindingsCollection.updateOne({
 					_id: new BSON.ObjectId(id)
@@ -140,8 +154,21 @@ const FindingDetails = () => {
 					testDate: new Date(),
 					uid: app.currentUser.id,
 					userEmail: app.currentUser.profile?.email || "Onbekend",
+					history: [],
 				}
 				if (finding?.theme) newFinding.theme = finding.theme
+				const findingData: FindingData = {
+					...newFinding
+				}
+				delete findingData.history
+				newFinding.history.push({
+					finding: findingData,
+					createdOn: new Date(),
+					createdBy: {
+						_id: app.currentUser.id,
+						email: app.currentUser.profile?.email || "Onbekend",
+					}
+				})
 				setFinding(newFinding)
 				history.push("/findings/new")
 			}

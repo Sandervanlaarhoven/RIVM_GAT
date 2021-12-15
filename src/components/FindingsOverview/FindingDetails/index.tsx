@@ -17,7 +17,7 @@ import { useParams, useHistory } from 'react-router-dom'
 import { BSON } from 'realm-web'
 
 import { useRealmApp } from '../../App/RealmApp'
-import { Browser, Finding, FindingType, Status } from '../../../types'
+import { Browser, Finding, FindingData, FindingType, Status } from '../../../types'
 import { catitaliseFirstLetter } from '../../utils'
 import { FindingTheme } from '../../../types/index';
 import { format } from 'date-fns'
@@ -102,6 +102,7 @@ const FindingDetailsAdmin: React.FC<IProps> = () => {
 				status: Status.Open,
 				type: FindingType.Bug,
 				testDate: new Date(),
+				history: []
 			}
 			let findingThemesDataRequest = mongoFindingThemesCollection.find()
 			if (id) {
@@ -146,6 +147,18 @@ const FindingDetailsAdmin: React.FC<IProps> = () => {
 					...finding
 				}
 				delete updatedFinding._id
+				const findingData: FindingData = {
+					...updatedFinding
+				}
+				delete findingData.history
+				updatedFinding.history.push({
+					finding: findingData,
+					createdOn: new Date(),
+					createdBy: {
+						_id: app.currentUser.id,
+						email: app.currentUser.profile?.email || "Onbekend",
+					}
+				})
 				await mongoFindingsCollection.updateOne({
 					_id: new BSON.ObjectId(id)
 				}, updatedFinding)
@@ -560,19 +573,15 @@ const FindingDetailsAdmin: React.FC<IProps> = () => {
 								onChange={(event) => handleChangeSelect(event, FindingFieldName.status)}
 							>
 								<MenuItem key={Status.Open} value={Status.Open}>{Status.Open}</MenuItem>
-								{finding?.type === FindingType.Verbetering && <>
-									<MenuItem key={Status.InOverweging} value={Status.InOverweging}>{Status.InOverweging}</MenuItem>
-									<MenuItem key={Status.Backlog} value={Status.Backlog}>{Status.Backlog}</MenuItem>
-									<MenuItem key={Status.Gepland} value={Status.Gepland}>{Status.Gepland}</MenuItem>
-									<MenuItem key={Status.Afgewezen} value={Status.Afgewezen}>{Status.Afgewezen}</MenuItem>
-									<MenuItem key={Status.Geimplementeerd} value={Status.Geimplementeerd}>{Status.Geimplementeerd}</MenuItem>
-								</>}
-								{finding?.type === FindingType.Bug && <>
-									<MenuItem key={Status.Geverifieerd} value={Status.Geverifieerd}>{Status.Geverifieerd}</MenuItem>
-									<MenuItem key={Status.Afgewezen} value={Status.Afgewezen}>{Status.Afgewezen}</MenuItem>
-									<MenuItem key={Status.Hertest} value={Status.Hertest}>{Status.Hertest}</MenuItem>
-									<MenuItem key={Status.Gesloten} value={Status.Gesloten}>{Status.Gesloten}</MenuItem>
-								</>}
+								{finding?.type === FindingType.Verbetering && <MenuItem key={Status.InOverweging} value={Status.InOverweging}>{Status.InOverweging}</MenuItem>}
+								{finding?.type === FindingType.Verbetering && <MenuItem key={Status.Backlog} value={Status.Backlog}>{Status.Backlog}</MenuItem>}
+								{finding?.type === FindingType.Verbetering && <MenuItem key={Status.Gepland} value={Status.Gepland}>{Status.Gepland}</MenuItem>}
+								{finding?.type === FindingType.Verbetering && <MenuItem key={Status.Afgewezen} value={Status.Afgewezen}>{Status.Afgewezen}</MenuItem>}
+								{finding?.type === FindingType.Verbetering && <MenuItem key={Status.Geimplementeerd} value={Status.Geimplementeerd}>{Status.Geimplementeerd}</MenuItem>}
+								{finding?.type === FindingType.Bug && <MenuItem key={Status.Geverifieerd} value={Status.Geverifieerd}>{Status.Geverifieerd}</MenuItem>}
+								{finding?.type === FindingType.Bug && <MenuItem key={Status.Afgewezen} value={Status.Afgewezen}>{Status.Afgewezen}</MenuItem>}
+								{finding?.type === FindingType.Bug && <MenuItem key={Status.Hertest} value={Status.Hertest}>{Status.Hertest}</MenuItem>}
+								{finding?.type === FindingType.Bug && <MenuItem key={Status.Gesloten} value={Status.Gesloten}>{Status.Gesloten}</MenuItem>}
 							</Select>
 						</FormControl>
 					</Box>
