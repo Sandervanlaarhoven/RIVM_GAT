@@ -66,6 +66,7 @@ const FindingDetailsPO: React.FC<IProps> = () => {
 	const [findingThemes, setFindingThemes] = useState<FindingTheme[]>([])
 	const [showNewTheme, setShowNewTheme] = useState<boolean>(false)
 	const [newTheme, setNewTheme] = useState<FindingTheme | undefined>()
+	const [showHistory, setShowHistory] = useState<boolean>(false);
 	const { enqueueSnackbar } = useSnackbar()
 
 	const onChangeNewTheme = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -260,98 +261,34 @@ const FindingDetailsPO: React.FC<IProps> = () => {
 					</Button>
 				</Box>
 			</Box>
-			<Paper className={classes.paperForForm}>
-				<Box
-					display="flex"
-					flexDirection="row"
-					alignItems="center"
-					justifyContent="flex-start"
-					width="100%"
-					mb={2}
-				>
-					<Typography variant="caption">Testdatum: {finding?.testDate ? format(finding.testDate, 'Pp', { locale: nl }) : ""}</Typography>
-				</Box>
-				<Box
-					display="flex"
-					flexDirection="row"
-					alignItems="center"
-					justifyContent="flex-start"
-					width="100%"
-					pb={3}
-				>
-					<Typography variant="body1">Omschrijving: {finding?.description || ''}</Typography>
-				</Box>
-				<Box
-					display="flex"
-					flexDirection="row"
-					alignItems="center"
-					justifyContent="flex-start"
-					width="100%"
-					pb={3}
-				>
-					<FormControl className={classes.formControl}>
-						<InputLabel id="type">Type bevinding</InputLabel>
-						<Select
-							labelId="type"
-							id="type"
-							value={finding?.type || ''}
-							onChange={(event) => handleChangeSelect(event, FindingFieldName.type)}
-						>
-							<MenuItem value={''}></MenuItem>
-							<MenuItem value={FindingType.Bug}>Bug</MenuItem>
-							<MenuItem value={FindingType.Verbetering}>Verbetering</MenuItem>
-						</Select>
-					</FormControl>
-				</Box>
-				{finding?.type === FindingType.Verbetering &&
+			{!showHistory && <>
+				<Paper className={classes.paperForForm}>
 					<Box
 						display="flex"
 						flexDirection="row"
 						alignItems="center"
-						justifyContent="center"
+						justifyContent="space-between"
 						width="100%"
-						pb={3}
 					>
-						<TextField
-							label="Beschrijving"
-							value={finding?.featureRequestDescription || ''}
-							fullWidth
-							variant="outlined"
-							onChange={(event) => handleChangeTextField(event, FindingFieldName.featureRequestDescription)}
-							helperText="Beschrijf zo goed mogelijk wat je graag zou willen verbeteren in de applicatie"
-						/>
+						<Box
+							display="flex"
+							flexDirection="row"
+							alignItems="center"
+							justifyContent="flex-start"
+							mb={2}
+						>
+							<Typography variant="caption">Testdatum: {finding?.testDate ? format(finding.testDate, 'Pp', { locale: nl }) : ""}</Typography>
+						</Box>
+						<Box
+							display="flex"
+							flexDirection="row"
+							alignItems="center"
+							justifyContent="flex-end"
+						>
+							<Button variant="outlined" className={classes.button} onClick={() => setShowHistory(!showHistory)}>{showHistory ? 'Terug' : 'Toon historie'}</Button>
+						</Box>
 					</Box>
-				}
-				{finding?.type === FindingType.Bug && finding?.featureRequestDescription && <Box
-						display="flex"
-						flexDirection="column"
-						alignItems="flex-start"
-						justifyContent="center"
-						width="100%"
-						pb={3}
-					>
-						<Typography className={classes.greyedOutText} variant="h6">Voorheen ingevoerd als verbetering</Typography>
-						<Typography className={classes.greyedOutText} variant="body2">Beschrijving: {finding?.featureRequestDescription || ''}</Typography>
-					</Box>
-				}
-				{finding?.type === FindingType.Verbetering && wasInitiallyEnteredAsBug() && <Box
-						display="flex"
-						flexDirection="column"
-						alignItems="flex-start"
-						justifyContent="center"
-						width="100%"
-						pb={3}
-					>
-						<Typography className={classes.greyedOutText} variant="h6">Voorheen ingevoerd als Bug</Typography>
-						{finding?.theme && <Typography className={classes.greyedOutText} variant="body2">Thema: {finding?.theme}</Typography>}
-						{finding?.expectedResult && <Typography className={classes.greyedOutText} variant="body2">Verwachte uitkomst: {finding?.expectedResult}</Typography>}
-						{finding?.actualResult && <Typography className={classes.greyedOutText} variant="body2">Daadwerkelijke uitkomst: {finding?.actualResult}</Typography>}
-						{finding?.additionalInfo && <Typography className={classes.greyedOutText} variant="body2">Extra informatie: {finding?.additionalInfo}</Typography>}
-						{finding?.browser && <Typography className={classes.greyedOutText} variant="body2">Browser: {finding?.browser}</Typography>}
-					</Box>
-				}
-				{finding?.type === FindingType.Bug && <>
-					{!showNewTheme && <Box
+					<Box
 						display="flex"
 						flexDirection="row"
 						alignItems="center"
@@ -359,37 +296,9 @@ const FindingDetailsPO: React.FC<IProps> = () => {
 						width="100%"
 						pb={3}
 					>
-						<Box
-							display="flex"
-							flexDirection="row"
-							alignItems="center"
-							justifyContent="center"
-						>
-							<FormControl className={classes.formControl}>
-								<InputLabel id="type">Thema</InputLabel>
-								<Select
-									labelId="type"
-									id="type"
-									value={finding?.theme || ''}
-									onChange={(event) => handleChangeSelect(event, FindingFieldName.findingTheme)}
-								>
-									<MenuItem key="" value={''}>Geen specifiek thema</MenuItem>
-									{findingThemes.map((findingTheme) => <MenuItem key={findingTheme.name} value={findingTheme.name}>{findingTheme.name}</MenuItem>)}
-								</Select>
-							</FormControl>
-						</Box>
-						<Box
-							display="flex"
-							flexDirection="row"
-							alignItems="center"
-							justifyContent="center"
-						>
-							<Button variant="outlined" className={classes.button} color="primary" onClick={() => setShowNewTheme(true)}>
-								Nieuw thema
-							</Button>
-						</Box>
-					</Box>}
-					{showNewTheme && <Box
+						<Typography variant="body1">Omschrijving: {finding?.description || ''}</Typography>
+					</Box>
+					<Box
 						display="flex"
 						flexDirection="row"
 						alignItems="center"
@@ -397,20 +306,160 @@ const FindingDetailsPO: React.FC<IProps> = () => {
 						width="100%"
 						pb={3}
 					>
+						<FormControl className={classes.formControl}>
+							<InputLabel id="type">Type bevinding</InputLabel>
+							<Select
+								labelId="type"
+								id="type"
+								value={finding?.type || ''}
+								onChange={(event) => handleChangeSelect(event, FindingFieldName.type)}
+							>
+								<MenuItem value={''}></MenuItem>
+								<MenuItem value={FindingType.Bug}>Bug</MenuItem>
+								<MenuItem value={FindingType.Verbetering}>Verbetering</MenuItem>
+							</Select>
+						</FormControl>
+					</Box>
+					{finding?.type === FindingType.Verbetering &&
 						<Box
 							display="flex"
 							flexDirection="row"
 							alignItems="center"
 							justifyContent="center"
-							width={300}
+							width="100%"
+							pb={3}
 						>
 							<TextField
-								label="Thema"
-								value={newTheme?.name || ''}
+								label="Beschrijving"
+								value={finding?.featureRequestDescription || ''}
+								fullWidth
+								variant="outlined"
+								onChange={(event) => handleChangeTextField(event, FindingFieldName.featureRequestDescription)}
+								helperText="Beschrijf zo goed mogelijk wat je graag zou willen verbeteren in de applicatie"
+							/>
+						</Box>
+					}
+					{finding?.type === FindingType.Bug && finding?.featureRequestDescription && <Box
+							display="flex"
+							flexDirection="column"
+							alignItems="flex-start"
+							justifyContent="center"
+							width="100%"
+							pb={3}
+						>
+							<Typography className={classes.greyedOutText} variant="h6">Voorheen ingevoerd als verbetering</Typography>
+							<Typography className={classes.greyedOutText} variant="body2">Beschrijving: {finding?.featureRequestDescription || ''}</Typography>
+						</Box>
+					}
+					{finding?.type === FindingType.Verbetering && wasInitiallyEnteredAsBug() && <Box
+							display="flex"
+							flexDirection="column"
+							alignItems="flex-start"
+							justifyContent="center"
+							width="100%"
+							pb={3}
+						>
+							<Typography className={classes.greyedOutText} variant="h6">Voorheen ingevoerd als Bug</Typography>
+							{finding?.theme && <Typography className={classes.greyedOutText} variant="body2">Thema: {finding?.theme}</Typography>}
+							{finding?.expectedResult && <Typography className={classes.greyedOutText} variant="body2">Verwachte uitkomst: {finding?.expectedResult}</Typography>}
+							{finding?.actualResult && <Typography className={classes.greyedOutText} variant="body2">Daadwerkelijke uitkomst: {finding?.actualResult}</Typography>}
+							{finding?.additionalInfo && <Typography className={classes.greyedOutText} variant="body2">Extra informatie: {finding?.additionalInfo}</Typography>}
+							{finding?.browser && <Typography className={classes.greyedOutText} variant="body2">Browser: {finding?.browser}</Typography>}
+						</Box>
+					}
+					{finding?.type === FindingType.Bug && <>
+						{!showNewTheme && <Box
+							display="flex"
+							flexDirection="row"
+							alignItems="center"
+							justifyContent="flex-start"
+							width="100%"
+							pb={3}
+						>
+							<Box
+								display="flex"
+								flexDirection="row"
+								alignItems="center"
+								justifyContent="center"
+							>
+								<FormControl className={classes.formControl}>
+									<InputLabel id="type">Thema</InputLabel>
+									<Select
+										labelId="type"
+										id="type"
+										value={finding?.theme || ''}
+										onChange={(event) => handleChangeSelect(event, FindingFieldName.findingTheme)}
+									>
+										<MenuItem key="" value={''}>Geen specifiek thema</MenuItem>
+										{findingThemes.map((findingTheme) => <MenuItem key={findingTheme.name} value={findingTheme.name}>{findingTheme.name}</MenuItem>)}
+									</Select>
+								</FormControl>
+							</Box>
+							<Box
+								display="flex"
+								flexDirection="row"
+								alignItems="center"
+								justifyContent="center"
+							>
+								<Button variant="outlined" className={classes.button} color="primary" onClick={() => setShowNewTheme(true)}>
+									Nieuw thema
+								</Button>
+							</Box>
+						</Box>}
+						{showNewTheme && <Box
+							display="flex"
+							flexDirection="row"
+							alignItems="center"
+							justifyContent="flex-start"
+							width="100%"
+							pb={3}
+						>
+							<Box
+								display="flex"
+								flexDirection="row"
+								alignItems="center"
+								justifyContent="center"
+								width={300}
+							>
+								<TextField
+									label="Thema"
+									value={newTheme?.name || ''}
+									fullWidth
+									multiline
+									variant="outlined"
+									onChange={onChangeNewTheme}
+								/>
+							</Box>
+							<Box
+								display="flex"
+								flexDirection="row"
+								alignItems="center"
+								justifyContent="center"
+							>
+								<Button variant="text" className={classes.button} color="default" onClick={() => setShowNewTheme(false)}>
+									Annuleren
+								</Button>
+								<Button variant="contained" className={classes.button} color="primary" onClick={createNewTheme}>
+									Aanmaken
+								</Button>
+							</Box>
+						</Box>}
+						<Box
+							display="flex"
+							flexDirection="row"
+							alignItems="center"
+							justifyContent="center"
+							width="100%"
+							pb={3}
+						>
+							<TextField
+								label="Verwachte uitkomst"
+								value={finding?.expectedResult || ''}
 								fullWidth
 								multiline
 								variant="outlined"
-								onChange={onChangeNewTheme}
+								onChange={(event) => handleChangeTextField(event, FindingFieldName.expectedResult)}
+								helperText="Schrijf hier in stappen uit wat je getest hebt en met welke data"
 							/>
 						</Box>
 						<Box
@@ -418,68 +467,79 @@ const FindingDetailsPO: React.FC<IProps> = () => {
 							flexDirection="row"
 							alignItems="center"
 							justifyContent="center"
+							width="100%"
+							pb={3}
 						>
-							<Button variant="text" className={classes.button} color="default" onClick={() => setShowNewTheme(false)}>
-								Annuleren
-							</Button>
-							<Button variant="contained" className={classes.button} color="primary" onClick={createNewTheme}>
-								Aanmaken
-							</Button>
+							<TextField
+								label="Daadwerkelijke uitkomst"
+								value={finding?.actualResult || ''}
+								fullWidth
+								multiline
+								variant="outlined"
+								onChange={(event) => handleChangeTextField(event, FindingFieldName.actualResult)}
+								helperText="Schrijf hier in stappen uit wat de daadwerkelijke uitkomst was en waarom dit niet aan je verwachting voldoet"
+							/>
 						</Box>
-					</Box>}
+						<Box
+							display="flex"
+							flexDirection="row"
+							alignItems="center"
+							justifyContent="center"
+							width="100%"
+							pb={3}
+						>
+							<TextField
+								label="Extra informatie"
+								value={finding?.additionalInfo || ''}
+								fullWidth
+								multiline
+								variant="outlined"
+								onChange={(event) => handleChangeTextField(event, FindingFieldName.additionalInfo)}
+								helperText="Testdata / specifieke rollen, rechten"
+							/>
+						</Box>
+						<Box
+							display="flex"
+							flexDirection="row"
+							alignItems="center"
+							justifyContent="flex-start"
+							width="100%"
+							pb={3}
+						>
+							<Box
+								display="flex"
+								flexDirection="row"
+								alignItems="center"
+								justifyContent="center"
+							>
+								<FormControl className={classes.formControl}>
+									<InputLabel id="browser">Browser</InputLabel>
+									<Select
+										labelId="browser"
+										id="browser"
+										value={finding?.browser || ''}
+										onChange={(event) => handleChangeSelect(event, FindingFieldName.browser)}
+									>
+										<MenuItem key="" value={''}>Kies de browser waarmee is getest</MenuItem>
+										<MenuItem key={Browser.Chrome} value={Browser.Chrome}>{Browser.Chrome}</MenuItem>
+										<MenuItem key={Browser.Edge} value={Browser.Edge}>{Browser.Edge}</MenuItem>
+										<MenuItem key={Browser.Firefox} value={Browser.Firefox}>{Browser.Firefox}</MenuItem>
+										<MenuItem key={Browser.InternetExplorer} value={Browser.InternetExplorer}>{Browser.InternetExplorer}</MenuItem>
+									</Select>
+								</FormControl>
+							</Box>
+						</Box>
+					</>
+					}
 					<Box
 						display="flex"
 						flexDirection="row"
 						alignItems="center"
-						justifyContent="center"
+						justifyContent="flex-start"
 						width="100%"
-						pb={3}
+						mb={2}
 					>
-						<TextField
-							label="Verwachte uitkomst"
-							value={finding?.expectedResult || ''}
-							fullWidth
-							multiline
-							variant="outlined"
-							onChange={(event) => handleChangeTextField(event, FindingFieldName.expectedResult)}
-							helperText="Schrijf hier in stappen uit wat je getest hebt en met welke data"
-						/>
-					</Box>
-					<Box
-						display="flex"
-						flexDirection="row"
-						alignItems="center"
-						justifyContent="center"
-						width="100%"
-						pb={3}
-					>
-						<TextField
-							label="Daadwerkelijke uitkomst"
-							value={finding?.actualResult || ''}
-							fullWidth
-							multiline
-							variant="outlined"
-							onChange={(event) => handleChangeTextField(event, FindingFieldName.actualResult)}
-							helperText="Schrijf hier in stappen uit wat de daadwerkelijke uitkomst was en waarom dit niet aan je verwachting voldoet"
-						/>
-					</Box>
-					<Box
-						display="flex"
-						flexDirection="row"
-						alignItems="center"
-						justifyContent="center"
-						width="100%"
-						pb={3}
-					>
-						<TextField
-							label="Extra informatie"
-							value={finding?.additionalInfo || ''}
-							fullWidth
-							multiline
-							variant="outlined"
-							onChange={(event) => handleChangeTextField(event, FindingFieldName.additionalInfo)}
-							helperText="Testdata / specifieke rollen, rechten"
-						/>
+						<Typography variant="body2"><i>Eventuele screenshots zijn opgeslagen onder de volgende naam: </i></Typography>
 					</Box>
 					<Box
 						display="flex"
@@ -487,7 +547,29 @@ const FindingDetailsPO: React.FC<IProps> = () => {
 						alignItems="center"
 						justifyContent="flex-start"
 						width="100%"
-						pb={3}
+						mb={2}
+					>
+						<Typography variant="body2"><b>"{finding?.testDate ? format(finding.testDate, 'Pp', { locale: nl }) : ""} - {finding?.userEmail || 'onbekend'}"</b></Typography>
+					</Box>
+				</Paper>
+				<Paper className={classes.paperForForm}>
+					<Box
+						display="flex"
+						flexDirection="row"
+						alignItems="center"
+						justifyContent="flex-start"
+						width="100%"
+						my={3}
+					>
+						<Typography variant="h6">Terugkoppeling en status informatie</Typography>
+					</Box>
+					<Box
+						display="flex"
+						flexDirection="row"
+						alignItems="center"
+						justifyContent="flex-start"
+						width="100%"
+						my={3}
 					>
 						<Box
 							display="flex"
@@ -496,111 +578,72 @@ const FindingDetailsPO: React.FC<IProps> = () => {
 							justifyContent="center"
 						>
 							<FormControl className={classes.formControl}>
-								<InputLabel id="browser">Browser</InputLabel>
+								<InputLabel id="status">Status</InputLabel>
 								<Select
-									labelId="browser"
-									id="browser"
-									value={finding?.browser || ''}
-									onChange={(event) => handleChangeSelect(event, FindingFieldName.browser)}
+									labelId="status"
+									id="status"
+									value={finding?.status || Status.Open}
+									onChange={(event) => handleChangeSelect(event, FindingFieldName.status)}
 								>
-									<MenuItem key="" value={''}>Kies de browser waarmee is getest</MenuItem>
-									<MenuItem key={Browser.Chrome} value={Browser.Chrome}>{Browser.Chrome}</MenuItem>
-									<MenuItem key={Browser.Edge} value={Browser.Edge}>{Browser.Edge}</MenuItem>
-									<MenuItem key={Browser.Firefox} value={Browser.Firefox}>{Browser.Firefox}</MenuItem>
-									<MenuItem key={Browser.InternetExplorer} value={Browser.InternetExplorer}>{Browser.InternetExplorer}</MenuItem>
+									<MenuItem key={Status.Open} value={Status.Open}>{Status.Open}</MenuItem>
+									{finding?.type === FindingType.Verbetering && <MenuItem key={Status.InOverweging} value={Status.InOverweging}>{Status.InOverweging}</MenuItem>}
+									{finding?.type === FindingType.Verbetering && <MenuItem key={Status.Backlog} value={Status.Backlog}>{Status.Backlog}</MenuItem>}
+									{finding?.type === FindingType.Verbetering && <MenuItem key={Status.Gepland} value={Status.Gepland}>{Status.Gepland}</MenuItem>}
+									{finding?.type === FindingType.Verbetering && <MenuItem key={Status.Afgewezen} value={Status.Afgewezen}>{Status.Afgewezen}</MenuItem>}
+									{finding?.type === FindingType.Verbetering && <MenuItem key={Status.Geimplementeerd} value={Status.Geimplementeerd}>{Status.Geimplementeerd}</MenuItem>}
+									{finding?.type === FindingType.Bug && <MenuItem key={Status.Geverifieerd} value={Status.Geverifieerd}>{Status.Geverifieerd}</MenuItem>}
+									{finding?.type === FindingType.Bug && <MenuItem key={Status.Afgewezen} value={Status.Afgewezen}>{Status.Afgewezen}</MenuItem>}
+									{finding?.type === FindingType.Bug && <MenuItem key={Status.Hertest} value={Status.Hertest}>{Status.Hertest}</MenuItem>}
+									{finding?.type === FindingType.Bug && <MenuItem key={Status.Gesloten} value={Status.Gesloten}>{Status.Gesloten}</MenuItem>}
 								</Select>
 							</FormControl>
 						</Box>
 					</Box>
-				</>
-				}
-				<Box
-					display="flex"
-					flexDirection="row"
-					alignItems="center"
-					justifyContent="flex-start"
-					width="100%"
-					mb={2}
-				>
-					<Typography variant="body2"><i>Eventuele screenshots zijn opgeslagen onder de volgende naam: </i></Typography>
-				</Box>
-				<Box
-					display="flex"
-					flexDirection="row"
-					alignItems="center"
-					justifyContent="flex-start"
-					width="100%"
-					mb={2}
-				>
-					<Typography variant="body2"><b>"{finding?.testDate ? format(finding.testDate, 'Pp', { locale: nl }) : ""} - {finding?.userEmail || 'onbekend'}"</b></Typography>
-				</Box>
-			</Paper>
-			<Paper className={classes.paperForForm}>
-				<Box
-					display="flex"
-					flexDirection="row"
-					alignItems="center"
-					justifyContent="flex-start"
-					width="100%"
-					my={3}
-				>
-					<Typography variant="h6">Terugkoppeling en status informatie</Typography>
-				</Box>
-				<Box
-					display="flex"
-					flexDirection="row"
-					alignItems="center"
-					justifyContent="flex-start"
-					width="100%"
-					my={3}
-				>
 					<Box
 						display="flex"
 						flexDirection="row"
 						alignItems="center"
 						justifyContent="center"
+						width="100%"
+						my={3}
 					>
-						<FormControl className={classes.formControl}>
-							<InputLabel id="status">Status</InputLabel>
-							<Select
-								labelId="status"
-								id="status"
-								value={finding?.status || Status.Open}
-								onChange={(event) => handleChangeSelect(event, FindingFieldName.status)}
-							>
-								<MenuItem key={Status.Open} value={Status.Open}>{Status.Open}</MenuItem>
-								{finding?.type === FindingType.Verbetering && <MenuItem key={Status.InOverweging} value={Status.InOverweging}>{Status.InOverweging}</MenuItem>}
-								{finding?.type === FindingType.Verbetering && <MenuItem key={Status.Backlog} value={Status.Backlog}>{Status.Backlog}</MenuItem>}
-								{finding?.type === FindingType.Verbetering && <MenuItem key={Status.Gepland} value={Status.Gepland}>{Status.Gepland}</MenuItem>}
-								{finding?.type === FindingType.Verbetering && <MenuItem key={Status.Afgewezen} value={Status.Afgewezen}>{Status.Afgewezen}</MenuItem>}
-								{finding?.type === FindingType.Verbetering && <MenuItem key={Status.Geimplementeerd} value={Status.Geimplementeerd}>{Status.Geimplementeerd}</MenuItem>}
-								{finding?.type === FindingType.Bug && <MenuItem key={Status.Geverifieerd} value={Status.Geverifieerd}>{Status.Geverifieerd}</MenuItem>}
-								{finding?.type === FindingType.Bug && <MenuItem key={Status.Afgewezen} value={Status.Afgewezen}>{Status.Afgewezen}</MenuItem>}
-								{finding?.type === FindingType.Bug && <MenuItem key={Status.Hertest} value={Status.Hertest}>{Status.Hertest}</MenuItem>}
-								{finding?.type === FindingType.Bug && <MenuItem key={Status.Gesloten} value={Status.Gesloten}>{Status.Gesloten}</MenuItem>}
-							</Select>
-						</FormControl>
+						<TextField
+							label="Terugkoppeling van de product owner"
+							value={finding?.feedbackProductOwner || ''}
+							multiline
+							fullWidth
+							variant="outlined"
+							onChange={(event) => handleChangeTextField(event, FindingFieldName.feedbackProductOwner)}
+						/>
 					</Box>
-				</Box>
+				</Paper>
+			</>}
+			{showHistory && finding?.history && <Paper className={classes.paperForForm}>
 				<Box
 					display="flex"
 					flexDirection="row"
 					alignItems="center"
-					justifyContent="center"
+					justifyContent="space-between"
 					width="100%"
-					my={3}
 				>
-					<TextField
-						label="Terugkoppeling van de product owner"
-						value={finding?.feedbackProductOwner || ''}
-						multiline
-						fullWidth
-						variant="outlined"
-						onChange={(event) => handleChangeTextField(event, FindingFieldName.feedbackProductOwner)}
-					/>
+					<Box
+						display="flex"
+						flexDirection="row"
+						alignItems="center"
+						justifyContent="flex-start"
+						mb={2}
+					>
+						<Typography variant="caption">Testdatum: {finding?.testDate ? format(finding.testDate, 'Pp', { locale: nl }) : ""}</Typography>
+					</Box>
+					<Box
+						display="flex"
+						flexDirection="row"
+						alignItems="center"
+						justifyContent="flex-end"
+					>
+						<Button variant="outlined" className={classes.button} onClick={() => setShowHistory(!showHistory)}>{showHistory ? 'Terug' : 'Toon historie'}</Button>
+					</Box>
 				</Box>
-			</Paper>
-			{finding?.history && <Paper className={classes.paperForForm}>
 				<HistoryOverview findingHistory={finding.history} />
 			</Paper>}
 		</Box>

@@ -66,6 +66,7 @@ const FindingDetailsAdmin: React.FC<IProps> = () => {
 	const [findingThemes, setFindingThemes] = useState<FindingTheme[]>([])
 	const [showNewTheme, setShowNewTheme] = useState<boolean>(false)
 	const [newTheme, setNewTheme] = useState<FindingTheme | undefined>()
+	const [showHistory, setShowHistory] = useState<boolean>(false);
 	const { enqueueSnackbar } = useSnackbar()
 
 	const onChangeNewTheme = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -260,17 +261,33 @@ const FindingDetailsAdmin: React.FC<IProps> = () => {
 					</Button>
 				</Box>
 			</Box>
-			<Paper className={classes.paperForForm}>
-				<Box
-					display="flex"
-					flexDirection="row"
-					alignItems="center"
-					justifyContent="flex-start"
-					width="100%"
-					mb={2}
-				>
-					<Typography variant="caption">Testdatum: {finding?.testDate ? format(finding.testDate, 'Pp', { locale: nl }) : ""}</Typography>
-				</Box>
+			{!showHistory && <>
+				<Paper className={classes.paperForForm}>
+					<Box
+						display="flex"
+						flexDirection="row"
+						alignItems="center"
+						justifyContent="space-between"
+						width="100%"
+					>
+						<Box
+							display="flex"
+							flexDirection="row"
+							alignItems="center"
+							justifyContent="flex-start"
+							mb={2}
+						>
+							<Typography variant="caption">Testdatum: {finding?.testDate ? format(finding.testDate, 'Pp', { locale: nl }) : ""}</Typography>
+						</Box>
+						<Box
+							display="flex"
+							flexDirection="row"
+							alignItems="center"
+							justifyContent="flex-end"
+						>
+							<Button variant="outlined" className={classes.button} onClick={() => setShowHistory(!showHistory)}>{showHistory ? 'Terug' : 'Toon historie'}</Button>
+						</Box>
+					</Box>
 				<Box
 					display="flex"
 					flexDirection="row"
@@ -637,7 +654,33 @@ const FindingDetailsAdmin: React.FC<IProps> = () => {
 					/>
 				</Box>
 			</Paper>
-			{finding?.history && <Paper className={classes.paperForForm}>
+			</>}
+			{showHistory && finding?.history && <Paper className={classes.paperForForm}>
+				<Box
+					display="flex"
+					flexDirection="row"
+					alignItems="center"
+					justifyContent="space-between"
+					width="100%"
+				>
+					<Box
+						display="flex"
+						flexDirection="row"
+						alignItems="center"
+						justifyContent="flex-start"
+						mb={2}
+					>
+						<Typography variant="caption">Testdatum: {finding?.testDate ? format(finding.testDate, 'Pp', { locale: nl }) : ""}</Typography>
+					</Box>
+					<Box
+						display="flex"
+						flexDirection="row"
+						alignItems="center"
+						justifyContent="flex-end"
+					>
+						<Button variant="outlined" className={classes.button} onClick={() => setShowHistory(!showHistory)}>{showHistory ? 'Terug' : 'Toon historie'}</Button>
+					</Box>
+				</Box>
 				<HistoryOverview findingHistory={finding.history} />
 			</Paper>}
 		</Box>
