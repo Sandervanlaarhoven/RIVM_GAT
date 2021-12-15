@@ -22,6 +22,7 @@ import { catitaliseFirstLetter } from '../../utils'
 import { FindingTheme } from '../../../types/index';
 import { format } from 'date-fns'
 import { nl } from 'date-fns/locale'
+import HistoryOverview from '../../utils/HistoryOverview'
 
 const useStyles: any = makeStyles((theme) => ({
 	optionListItem: {
@@ -274,17 +275,11 @@ const FindingDetailsPO: React.FC<IProps> = () => {
 					display="flex"
 					flexDirection="row"
 					alignItems="center"
-					justifyContent="center"
+					justifyContent="flex-start"
 					width="100%"
 					pb={3}
 				>
-					<TextField
-						label="Omschrijving"
-						value={finding?.description || ''}
-						fullWidth
-						variant="outlined"
-						helperText="Korte omschrijving van de bevinding"
-					/>
+					<Typography variant="body1">Omschrijving: {finding?.description || ''}</Typography>
 				</Box>
 				<Box
 					display="flex"
@@ -446,6 +441,7 @@ const FindingDetailsPO: React.FC<IProps> = () => {
 							fullWidth
 							multiline
 							variant="outlined"
+							onChange={(event) => handleChangeTextField(event, FindingFieldName.expectedResult)}
 							helperText="Schrijf hier in stappen uit wat je getest hebt en met welke data"
 						/>
 					</Box>
@@ -463,6 +459,7 @@ const FindingDetailsPO: React.FC<IProps> = () => {
 							fullWidth
 							multiline
 							variant="outlined"
+							onChange={(event) => handleChangeTextField(event, FindingFieldName.actualResult)}
 							helperText="Schrijf hier in stappen uit wat de daadwerkelijke uitkomst was en waarom dit niet aan je verwachting voldoet"
 						/>
 					</Box>
@@ -504,6 +501,7 @@ const FindingDetailsPO: React.FC<IProps> = () => {
 									labelId="browser"
 									id="browser"
 									value={finding?.browser || ''}
+									onChange={(event) => handleChangeSelect(event, FindingFieldName.browser)}
 								>
 									<MenuItem key="" value={''}>Kies de browser waarmee is getest</MenuItem>
 									<MenuItem key={Browser.Chrome} value={Browser.Chrome}>{Browser.Chrome}</MenuItem>
@@ -602,6 +600,9 @@ const FindingDetailsPO: React.FC<IProps> = () => {
 					/>
 				</Box>
 			</Paper>
+			{finding?.history && <Paper className={classes.paperForForm}>
+				<HistoryOverview findingHistory={finding.history} />
+			</Paper>}
 		</Box>
 	)
 }
