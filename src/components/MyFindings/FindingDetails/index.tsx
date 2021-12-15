@@ -139,7 +139,22 @@ const FindingDetails = () => {
 					variant: 'success',
 				})
 			} else if (finding) {
-				await mongoFindingsCollection.insertOne(finding)
+				const findingData: FindingData = {
+					...finding
+				}
+				delete findingData.history
+				const newFinding = {
+					...finding,
+					history: [{
+						finding: findingData,
+						createdOn: new Date(),
+						createdBy: {
+							_id: app.currentUser.id,
+							email: app.currentUser.profile?.email || "Onbekend",
+						}
+					}]
+				}
+				await mongoFindingsCollection.insertOne(newFinding)
 				enqueueSnackbar('De nieuwe bevinding is aangemaakt.', {
 					variant: 'success',
 				})
