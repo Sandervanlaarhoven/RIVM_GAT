@@ -4,30 +4,25 @@ import {
 	Box,
 	FormControl,
 	TextField,
-	Button,
-	IconButton,
 	InputLabel,
 	MenuItem,
 	Select,
 	Chip,
-	Tab,
-	Tabs,
+	ButtonBase,
 } from "@material-ui/core"
 import { makeStyles } from '@material-ui/core/styles'
-import ArchiveIcon from '@material-ui/icons/Archive'
-import EditIcon from '@material-ui/icons/Edit'
 import BugReportIcon from '@material-ui/icons/BugReport'
 import MailOutlineIcon from '@material-ui/icons/MailOutline'
 import { useSnackbar } from 'notistack'
 
-import { Finding, FindingTheme, FindingType, FindingFieldName, Status, FindingData } from '../../types'
+import { Finding, FindingTheme, FindingType, FindingFieldName } from '../../types'
 import { useRealmApp } from '../App/RealmApp'
 import { useHistory } from 'react-router-dom'
-import { BSON } from 'realm-web'
 import { format } from 'date-fns'
 import { nl } from 'date-fns/locale'
 import { set } from '../../redux/findings/findingsSlice'
 import { useAppSelector, useAppDispatch } from '../../hooks'
+import { BSON } from 'realm-web'
 
 const useStyles: any = makeStyles(() => ({
 	button: {
@@ -36,6 +31,10 @@ const useStyles: any = makeStyles(() => ({
 	formControl: {
 		minWidth: 200
 	},
+	buttonBase: {
+		width: "100%",
+		marginBottom: 10
+	}
 }))
 
 interface IProps {
@@ -46,7 +45,7 @@ type PropsFilter = {
 	userEmail?: string,
 }
 
-const FindingsOverview: React.FC<IProps> = () => {
+const Archive: React.FC<IProps> = () => {
 	const classes = useStyles()
 	const dispatch = useAppDispatch()
 	const [filteredFindings, setfilteredFindings] = useState<Finding[]>([])
@@ -56,18 +55,16 @@ const FindingsOverview: React.FC<IProps> = () => {
 	const app = useRealmApp()
 	const { enqueueSnackbar } = useSnackbar()
 	const mongo = app.currentUser.mongoClient("mongodb-atlas")
-	const mongoFindingsCollection = mongo.db("RIVM_GAT").collection("findings")
 	const mongoArchivedFindingsCollection = mongo.db("RIVM_GAT").collection("archived_findings")
 	const mongoFindingThemesCollection = mongo.db("RIVM_GAT").collection("finding_themes")
 	const [findingThemes, setFindingThemes] = useState<FindingTheme[]>([])
 	const findingsDataState = useAppSelector(state => state.findingsData)
 	const { findings } = findingsDataState
-	const [currentTab, setCurrentTab] = React.useState(0);
 	const [userEmails, setUserEmails] = useState<string[]>([])
 
 	const getData = async () => {
 		try {
-			const findingsData = mongoFindingsCollection.find(null, {
+			const findingsData = mongoArchivedFindingsCollection.find(null, {
 				sort: { testDate: -1 }
 			})
 			let findingThemesData = mongoFindingThemesCollection.find()
@@ -92,37 +89,6 @@ const FindingsOverview: React.FC<IProps> = () => {
 				if (propsFilter) {
 					if (propsFilter.theme && finding.theme !== propsFilter.theme) passedPropsFilter = false
 				}
-				switch (currentTab) {
-					case 0: {
-						passedPropsFilter = finding.status === Status.Open
-						break
-					}
-					case 1: {
-						passedPropsFilter = finding.status === Status.Geverifieerd && finding.type === FindingType.Bug
-						break
-					}
-					case 2: {
-						passedPropsFilter = finding.status === Status.Hertest && finding.type === FindingType.Bug
-						break
-					}
-					case 3: {
-						passedPropsFilter = finding.status === Status.Afgewezen && finding.type === FindingType.Bug
-						break
-					}
-					case 4: {
-						passedPropsFilter = finding.status === Status.Gesloten && finding.type === FindingType.Bug
-						break
-					}
-					case 5: {
-						passedPropsFilter = finding.type === FindingType.Bug
-						break
-					}
-
-					default: {
-						passedPropsFilter = false
-						break
-					}
-				}
 				if (propsFilter.userEmail && finding.userEmail !== propsFilter.userEmail) passedPropsFilter = false
 				return passedPropsFilter && (finding.description.toLowerCase().includes(filterString.toLowerCase()) || format(finding.testDate, 'Pp', { locale: nl }).includes(filterString.toLowerCase()))
 			}).sort((a, b) => b.testDate.valueOf() - a.testDate.valueOf())
@@ -130,7 +96,7 @@ const FindingsOverview: React.FC<IProps> = () => {
 			setfilteredFindings(newFilteredFindings)
 		}, 500);
 		return () => clearTimeout(filterTimeout)
-	}, [filterString, propsFilter, findings, currentTab])
+	}, [filterString, propsFilter, findings])
 
 	const setUserEmailDropdownValues = (findings: Finding[]) => {
 		const emailList = findings.map((finding) => finding.userEmail || 'onbekend')
@@ -142,7 +108,7 @@ const FindingsOverview: React.FC<IProps> = () => {
 		return <Box
 			display="flex"
 			flexDirection="row"
-			alignItems="top"
+			alignItems="center"
 			justifyContent="space-between"
 			width="100%"
 		>
@@ -159,7 +125,7 @@ const FindingsOverview: React.FC<IProps> = () => {
 		return <Box
 			display="flex"
 			flexDirection="row"
-			alignItems="top"
+			alignItems="center"
 			justifyContent="space-between"
 			width="100%"
 		>
@@ -188,48 +154,8 @@ const FindingsOverview: React.FC<IProps> = () => {
 		}
 	}
 
-	const onCreateNewFindingClick = () => {
-		history.push('/findings/new')
-	}
-
-	const onEditClick = (findingID: BSON.ObjectId | undefined) => {
-		if (findingID) history.push(`/findingsoverview/${findingID}`)
-	}
-
-	const onArchiveClick = async (finding: Finding) => {
-		if (finding?._id) {
-			try {
-				const updatedFinding = {
-					...finding,
-					status: Status.Archived,
-					history: [...finding.history],
-				}
-				const findingData: FindingData = {
-					...updatedFinding,
-				}
-				delete findingData.history
-				debugger
-				updatedFinding.history.push({
-					finding: findingData,
-					createdOn: new Date(),
-					createdBy: {
-						_id: app.currentUser.id,
-						email: app.currentUser.profile?.email || "Onbekend",
-					}
-				})
-
-
-				await mongoFindingsCollection.deleteOne({
-					_id: new BSON.ObjectId(finding._id)
-				})
-				await mongoArchivedFindingsCollection.insertOne(updatedFinding)
-				getData()
-			} catch (error) {
-				enqueueSnackbar('Er is helaas iets mis gegaan bij het verwijderen.', {
-					variant: 'error',
-				})
-			}
-		}
+	const showDetails = (findingID: BSON.ObjectId | undefined) => {
+		if (findingID) history.push(`/archive/${findingID}`)
 	}
 
 	const onChangeFilterString = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -246,10 +172,6 @@ const FindingsOverview: React.FC<IProps> = () => {
 			...propsFilter,
 			[fieldName]: event.target.value
 		})
-	}
-
-	const handleChangeTab = (event: React.ChangeEvent<{}>, newValue: number) => {
-		setCurrentTab(newValue)
 	}
 
 	return (
@@ -276,17 +198,7 @@ const FindingsOverview: React.FC<IProps> = () => {
 					alignItems="flex-start"
 					justifyContent="center"
 				>
-					<Typography variant="h4">Bevindingen beheren</Typography>
-				</Box>
-				<Box
-					display="flex"
-					flexDirection="row"
-					alignItems="center"
-					justifyContent="flex-end"
-				>
-					<Button variant="contained" className={classes.button} color="primary" onClick={onCreateNewFindingClick}>
-						Nieuwe bevinding
-					</Button>
+					<Typography variant="h4">Bevindingen archief</Typography>
 				</Box>
 			</Box>
 			<Box
@@ -370,43 +282,25 @@ const FindingsOverview: React.FC<IProps> = () => {
 					</Box>
 				</Box>
 			</Box>
-			<Tabs value={currentTab} onChange={handleChangeTab} indicatorColor="primary">
-				<Tab label={Status.Open} />
-				<Tab label={Status.Geverifieerd} />
-				<Tab label={Status.Hertest} />
-				<Tab label={Status.Afgewezen} />
-				<Tab label={Status.Gesloten} />
-				<Tab label={Status.AllStatussus} />
-			</Tabs>
 			<Box
 				display="flex"
 				flexDirection="column"
 				alignItems="flex-start"
 				justifyContent="flex-start"
 				width="100%"
-				my={5}
+				my={1}
 			>
-				{currentTab === 0 && <Box
-					display="flex"
-					flexDirection="column"
-					alignItems="flex-start"
-					justifyContent="center"
-					mb={2}
-				>
-					<Typography variant="body2"><i>In deze tab worden zowel verbeteringen als bugs getoond zodat deze nog kunnen worden beoordeeld door de testcoördinator.</i></Typography>
-				</Box>}
 				{filteredFindings.length === 0 && <Box
 					display="flex"
 					flexDirection="column"
 					alignItems="flex-start"
 					justifyContent="center"
 				>
-					<Typography variant="body2"><i>Er zijn geen bevindingen met deze status.</i></Typography>
+					<Typography variant="body2"><i>Er zijn geen bevindingen gevonden.</i></Typography>
 				</Box>}
 				{filteredFindings && filteredFindings.map((finding, index) => {
-					return finding ? <Box
+					return finding ? <ButtonBase key={index} className={classes.buttonBase} onClick={() => showDetails(finding._id)}><Box
 						display="flex"
-						key={index}
 						flexDirection="column"
 						alignItems="flex-start"
 						justifyContent="center"
@@ -415,86 +309,80 @@ const FindingsOverview: React.FC<IProps> = () => {
 						borderRadius={11}
 						bgcolor="#FFF"
 						p={1}
-						pb={2}
-						mb={2}
 					>
-						<Box
-							display="flex"
-							flexDirection="row"
-							alignItems="center"
-							justifyContent="space-between"
-							width="100%"
-						>
 							<Box
 								display="flex"
-								flexDirection="row"
-								alignItems="center"
-								justifyContent="flex-start"
+								flexDirection="column"
+								alignItems="flex-start"
+								justifyContent="center"
+								width="100%"
 							>
-								{finding.type === 'bug' && <Box
-									display="flex"
-									flexDirection="row"
-									alignItems="center"
-									justifyContent="flex-start"
-								>
-									<BugReportIcon />
-								</Box>}
-								{finding.type === 'verbetering' && <Box
-									display="flex"
-									flexDirection="row"
-									alignItems="center"
-									justifyContent="flex-start"
-								>
-									<MailOutlineIcon />
-								</Box>}
 								<Box
 									display="flex"
 									flexDirection="row"
 									alignItems="center"
-									justifyContent="flex-start"
-									ml={1}
+									justifyContent="space-between"
+									width="100%"
+									pb={1}
 								>
-									<Chip variant="outlined" color="primary" label={finding.status} size="small" />
+									<Box
+										display="flex"
+										flexDirection="row"
+										alignItems="center"
+										justifyContent="flex-start"
+									>
+										{finding.type === 'bug' && <Box
+											display="flex"
+											flexDirection="row"
+											alignItems="center"
+											justifyContent="flex-start"
+										>
+											<BugReportIcon />
+										</Box>}
+										{finding.type === 'verbetering' && <Box
+											display="flex"
+											flexDirection="row"
+											alignItems="center"
+											justifyContent="flex-start"
+										>
+											<MailOutlineIcon />
+										</Box>}
+										<Box
+											display="flex"
+											flexDirection="row"
+											alignItems="center"
+											justifyContent="flex-start"
+											ml={1}
+										>
+											<Chip variant="outlined" color="primary" label={finding.status} size="small" />
+										</Box>
+										<Box
+											display="flex"
+											flexDirection="row"
+											alignItems="center"
+											justifyContent="flex-start"
+											ml={1}
+										>
+											<Typography variant="caption">{finding.testDate ? format(finding.testDate, 'Pp', { locale: nl }) : ""}</Typography>
+										</Box>
+										{finding.userEmail && <Box
+											display="flex"
+											flexDirection="row"
+											alignItems="center"
+											justifyContent="flex-start"
+											ml={1}
+										>
+											<Typography variant="caption"> - {finding.userEmail}</Typography>
+										</Box>}
+									</Box>
 								</Box>
-								<Box
-									display="flex"
-									flexDirection="row"
-									alignItems="center"
-									justifyContent="flex-start"
-									ml={1}
-								>
-									<Typography variant="caption">{finding.testDate ? format(finding.testDate, 'Pp', { locale: nl }) : ""}</Typography>
-								</Box>
-								{finding.userEmail && <Box
-									display="flex"
-									flexDirection="row"
-									alignItems="center"
-									justifyContent="flex-start"
-									ml={1}
-								>
-									<Typography variant="caption"> - {finding.userEmail}</Typography>
-								</Box>}
+								{FindingComponent(finding)}
 							</Box>
-							{finding._id && <Box
-								display="flex"
-								flexDirection="row"
-								alignItems="center"
-								justifyContent="flex-end"
-							>
-								<IconButton aria-label="delete" className={classes.margin} color="primary" onClick={() => onEditClick(finding._id)}>
-									<EditIcon />
-								</IconButton>
-								<IconButton aria-label="archive" className={classes.margin} color="secondary" onClick={() => onArchiveClick(finding)}>
-									<ArchiveIcon />
-								</IconButton>
-							</Box>}
-						</Box>
-						{FindingComponent(finding)}
-					</Box> : null
+					</Box></ButtonBase> : null
 				})}
 			</Box>
 		</Box>
 	)
 }
 
-export default FindingsOverview
+export default Archive

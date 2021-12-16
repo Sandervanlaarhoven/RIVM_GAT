@@ -22,6 +22,8 @@ import Settings from '../Settings'
 import InformationPage from '../Information'
 import ProductOwnerOverview from '../ProductOwnerOverview'
 import FindingDetailsPO from '../ProductOwnerOverview/FindingDetails'
+import Archive from '../Archive'
+import FindingDetailsArchive from '../Archive/FindingDetails'
 
 const REALM_APP_ID = "rivm_gat-lkoaf"
 
@@ -127,6 +129,24 @@ const App = () => {
             <RequireLoggedInUser>
               <Framework>
                 <InformationPage />
+              </Framework>
+            </RequireLoggedInUser>
+          </Route>
+          <Route exact path="/archive">
+            <RequireLoggedInUser>
+              <Framework>
+                <RequireRole role={Role.test_coordinator}>
+                  <Archive />
+                </RequireRole>
+              </Framework>
+            </RequireLoggedInUser>
+          </Route>
+          <Route exact path="/archive/:id">
+            <RequireLoggedInUser>
+              <Framework>
+                <RequireRole role={Role.test_coordinator}>
+                  <FindingDetailsArchive />
+                </RequireRole>
               </Framework>
             </RequireLoggedInUser>
           </Route>

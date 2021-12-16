@@ -4,6 +4,7 @@ import ListIcon from "@material-ui/icons/List"
 import PlaylistAddIcon from "@material-ui/icons/PlaylistAdd"
 import SettingsIcon from "@material-ui/icons/Settings"
 import InfoIcon from "@material-ui/icons/InfoOutlined"
+import ArchiveIcon from "@material-ui/icons/ArchiveOutlined"
 import { useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -111,6 +112,15 @@ const SideBar: React.FC<IProps> = () => {
 						<ListItemIcon><InfoIcon /></ListItemIcon>
 						<ListItemText
 							primary='Informatie'
+						/>
+					</ListItem>
+					<ListItem
+						button
+						onClick={() => navigate('/archive')}
+					>
+						<ListItemIcon><ArchiveIcon /></ListItemIcon>
+						<ListItemText
+							primary='Archief'
 						/>
 					</ListItem>
 				</List>

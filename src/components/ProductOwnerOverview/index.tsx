@@ -14,13 +14,13 @@ import {
 	Tabs,
 } from "@material-ui/core"
 import { makeStyles } from '@material-ui/core/styles'
-import DeleteIcon from '@material-ui/icons/Delete'
+import ArchiveIcon from '@material-ui/icons/Archive'
 import EditIcon from '@material-ui/icons/Edit'
 import BugReportIcon from '@material-ui/icons/BugReport'
 import MailOutlineIcon from '@material-ui/icons/MailOutline'
 import { useSnackbar } from 'notistack'
 
-import { Finding, FindingTheme, FindingType, FindingFieldName, Status } from '../../types'
+import { Finding, FindingTheme, FindingType, FindingFieldName, Status, FindingData } from '../../types'
 import { useRealmApp } from '../App/RealmApp'
 import { useHistory } from 'react-router-dom'
 import { BSON } from 'realm-web'
@@ -57,6 +57,7 @@ const ProductOwnerOverview: React.FC<IProps> = () => {
 	const { enqueueSnackbar } = useSnackbar()
 	const mongo = app.currentUser.mongoClient("mongodb-atlas")
 	const mongoFindingsCollection = mongo.db("RIVM_GAT").collection("findings")
+	const mongoArchivedFindingsCollection = mongo.db("RIVM_GAT").collection("archived_findings")
 	const mongoFindingThemesCollection = mongo.db("RIVM_GAT").collection("finding_themes")
 	const [findingThemes, setFindingThemes] = useState<FindingTheme[]>([])
 	const findingsDataState = useAppSelector(state => state.findingsData)
@@ -201,12 +202,33 @@ const ProductOwnerOverview: React.FC<IProps> = () => {
 		if (findingID) history.push(`/productowneroverview/${findingID}`)
 	}
 
-	const onDeleteClick = async (findingID: BSON.ObjectId | undefined) => {
-		if (findingID) {
+	const onArchiveClick = async (finding: Finding) => {
+		if (finding?._id) {
 			try {
-				await mongoFindingsCollection.deleteOne({
-					_id: new BSON.ObjectId(findingID)
+				const updatedFinding = {
+					...finding,
+					status: Status.Archived,
+					history: [...finding.history],
+				}
+				const findingData: FindingData = {
+					...updatedFinding,
+				}
+				delete findingData.history
+				debugger
+				updatedFinding.history.push({
+					finding: findingData,
+					createdOn: new Date(),
+					createdBy: {
+						_id: app.currentUser.id,
+						email: app.currentUser.profile?.email || "Onbekend",
+					}
 				})
+
+
+				await mongoFindingsCollection.deleteOne({
+					_id: new BSON.ObjectId(finding._id)
+				})
+				await mongoArchivedFindingsCollection.insertOne(updatedFinding)
 				getData()
 			} catch (error) {
 				enqueueSnackbar('Er is helaas iets mis gegaan bij het verwijderen.', {
@@ -260,7 +282,7 @@ const ProductOwnerOverview: React.FC<IProps> = () => {
 					alignItems="flex-start"
 					justifyContent="center"
 				>
-					<Typography variant="h4">Bevindingen beheren</Typography>
+					<Typography variant="h4">Product owner overzicht</Typography>
 				</Box>
 				<Box
 					display="flex"
@@ -460,8 +482,8 @@ const ProductOwnerOverview: React.FC<IProps> = () => {
 								<IconButton aria-label="delete" className={classes.margin} color="primary" onClick={() => onEditClick(finding._id)}>
 									<EditIcon />
 								</IconButton>
-								<IconButton aria-label="delete" className={classes.margin} color="secondary" onClick={() => onDeleteClick(finding._id)}>
-									<DeleteIcon />
+								<IconButton aria-label="archive" className={classes.margin} color="secondary" onClick={() => onArchiveClick(finding)}>
+									<ArchiveIcon />
 								</IconButton>
 							</Box>}
 						</Box>

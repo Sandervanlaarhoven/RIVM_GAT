@@ -3,26 +3,15 @@ import {
 	Typography,
 	Box,
 } from "@material-ui/core"
-import { makeStyles } from '@material-ui/core/styles'
 
 import { HistoryElement } from '../../../types'
 import HistoryItem from './HistoryItem'
-
-const useStyles: any = makeStyles(() => ({
-	button: {
-		marginLeft: 10
-	},
-	formControl: {
-		minWidth: 200
-	},
-}))
 
 interface IProps {
 	findingHistory: HistoryElement[]
 }
 
 const HistoryOverview: React.FC<IProps> = ({ findingHistory }) => {
-	const classes = useStyles()
 
 	return (
 		<Box
@@ -31,7 +20,6 @@ const HistoryOverview: React.FC<IProps> = ({ findingHistory }) => {
 			flexDirection="column"
 			alignItems="flex-start"
 			justifyContent="center"
-			className={classes.dummy}
 			pb={2}
 		>
 			<Box
@@ -68,7 +56,7 @@ const HistoryOverview: React.FC<IProps> = ({ findingHistory }) => {
 					<Typography variant="body2"><i>Er is geen historie gevonden.</i></Typography>
 				</Box>}
 				{findingHistory && findingHistory.map((findingHistoryItem, index) => {
-					return findingHistoryItem?.finding ? <HistoryItem item={findingHistoryItem}/> : null
+					return findingHistoryItem?.finding ? <HistoryItem key={index} item={findingHistoryItem}/> : null
 				})}
 			</Box>
 		</Box>
