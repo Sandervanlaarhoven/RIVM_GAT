@@ -114,7 +114,7 @@ const SideBar: React.FC<IProps> = () => {
 							primary='Informatie'
 						/>
 					</ListItem>
-					<ListItem
+					{(hasTestCoordinatorRole || hasProductOwnerRole) && <ListItem
 						button
 						onClick={() => navigate('/archive')}
 					>
@@ -122,7 +122,7 @@ const SideBar: React.FC<IProps> = () => {
 						<ListItemText
 							primary='Archief'
 						/>
-					</ListItem>
+					</ListItem>}
 				</List>
 			</Box>
 		</Box>
