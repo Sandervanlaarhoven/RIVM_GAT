@@ -272,12 +272,13 @@ const FindingDetailsAdmin: React.FC<IProps> = () => {
 					>
 						<Box
 							display="flex"
-							flexDirection="row"
-							alignItems="center"
-							justifyContent="flex-start"
+							flexDirection="column"
+							alignItems="flex-start"
+							justifyContent="center"
 							mb={2}
 						>
 							<Typography variant="caption">Testdatum: {finding?.testDate ? format(finding.testDate, 'Pp', { locale: nl }) : ""}</Typography>
+							{finding?.userEmail && <Typography variant="caption">Opgevoerd door: {finding?.userEmail}</Typography>}
 						</Box>
 						<Box
 							display="flex"
