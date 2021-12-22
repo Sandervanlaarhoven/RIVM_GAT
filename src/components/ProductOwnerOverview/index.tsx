@@ -214,7 +214,6 @@ const ProductOwnerOverview: React.FC<IProps> = () => {
 					...updatedFinding,
 				}
 				delete findingData.history
-				debugger
 				updatedFinding.history.push({
 					finding: findingData,
 					createdOn: new Date(),
