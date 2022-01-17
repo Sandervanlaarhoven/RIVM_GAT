@@ -18,15 +18,25 @@ const findingsData = createSlice({
 	reducers: {
 		set: (state, action: PayloadAction<Finding[]>) => {
 			state.findings = action.payload
+			state.findings.sort((a, b) => b.testDate.valueOf() - a.testDate.valueOf())
 			state.loading = false
 		},
 		addFinding: (state, action: PayloadAction<Finding>) => {
 			state.findings.push(action.payload)
+			state.findings.sort((a, b) => b.testDate.valueOf() - a.testDate.valueOf())
+			state.loading = false
+		},
+		updateFinding: (state, action: PayloadAction<Finding>) => {
+			const updatedFinding = action.payload
+			console.log(updatedFinding)
+			state.findings = state.findings.map(finding => finding._id?.toString() === updatedFinding._id?.toString() ? updatedFinding : finding)
+			state.findings.sort((a, b) => b.testDate.valueOf() - a.testDate.valueOf())
 			state.loading = false
 		},
 		deleteFinding: (state, action: PayloadAction<BSON.ObjectId>) => {
 			const id = action.payload
 			state.findings = state.findings.filter((finding) => finding._id?.toString() !== id.toString())
+			state.findings.sort((a, b) => b.testDate.valueOf() - a.testDate.valueOf())
 			state.loading = false
 		},
 	}

@@ -21,6 +21,11 @@ const CollectionWatches = () => {
 					break
 				}
 
+				case 'replace': {
+					dispatch(updateFinding(fullDocument))
+					break
+				}
+
 				case 'delete': {
 					dispatch(deleteFinding(change.documentKey._id))
 					break
@@ -44,3 +49,7 @@ const CollectionWatches = () => {
 }
 
 export default CollectionWatches
+function updateFinding(fullDocument: any): any {
+	throw new Error('Function not implemented.')
+}
+
