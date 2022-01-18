@@ -26,6 +26,8 @@ import { FindingTheme, FindingData } from '../../../types/index';
 import { format } from 'date-fns'
 import { nl } from 'date-fns/locale'
 
+import FindingDetailsReadOnly from './FindingDetailsReadOnly'
+
 const useStyles: any = makeStyles((theme) => ({
 	optionListItem: {
 		width: '100%',
@@ -231,7 +233,19 @@ const FindingDetails = () => {
 		}
 	}
 
-	return (
+	let isGesloten: boolean = false
+	switch (finding?.status) {
+		case Status.Gesloten:
+		case Status.Geimplementeerd:
+		case Status.Afgewezen:
+			isGesloten = true
+			break;
+
+		default:
+			break;
+	}
+
+	return (isGesloten ? <FindingDetailsReadOnly finding={finding} /> : 
 		<Box
 			display="flex"
 			width="100%"
