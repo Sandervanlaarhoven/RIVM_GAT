@@ -12,10 +12,10 @@ import {
 	Chip,
 	Tab,
 	Tabs,
+	ButtonBase,
 } from "@material-ui/core"
 import { makeStyles } from '@material-ui/core/styles'
 import ArchiveIcon from '@material-ui/icons/Archive'
-import EditIcon from '@material-ui/icons/Edit'
 import BugReportIcon from '@material-ui/icons/BugReport'
 import MailOutlineIcon from '@material-ui/icons/MailOutline'
 import { useSnackbar } from 'notistack'
@@ -38,6 +38,10 @@ const useStyles: any = makeStyles(() => ({
 	},
 	formControl: {
 		minWidth: 200
+	},
+	buttonBase: {
+		flexGrow: 1,
+		padding: 10
 	},
 }))
 
@@ -141,54 +145,19 @@ const FindingsOverview: React.FC<IProps> = () => {
 		setUserEmails(uniqueEmailList)
 	}
 
-	const VerbeteringFinding = (finding: Finding) => {
-		return <Box
-			display="flex"
-			flexDirection="row"
-			alignItems="top"
-			justifyContent="space-between"
-			width="100%"
-		>
-			<Box>
-				<Typography>{finding.description}</Typography>
-			</Box>
-			{finding.theme && <Box ml={2}>
-				<Chip label={finding.theme} size="small" />
-			</Box>}
-		</Box>
-	}
-
-	const OpenFinding = (finding: Finding) => {
-		return <Box
-			display="flex"
-			flexDirection="row"
-			alignItems="top"
-			justifyContent="space-between"
-			width="100%"
-		>
-			<Box>
-				<Typography>{finding.description}</Typography>
-			</Box>
-			{finding.theme && <Box ml={2}>
-				<Chip label={finding.theme} size="small" />
-			</Box>}
-		</Box>
-	}
-
 	const FindingComponent = (finding: Finding) => {
-		switch (finding.type) {
-
-			case FindingType.Bug: {
-				return OpenFinding(finding)
-			}
-
-			case FindingType.Verbetering: {
-				return VerbeteringFinding(finding)
-			}
-
-			default:
-				break
-		}
+		return <Box
+			display="flex"
+			flexDirection="row"
+			alignItems="center"
+			justifyContent="space-between"
+			marginTop={1}
+			width="100%"
+		>
+			<Box>
+				<Typography align="left" variant="body2">{finding.description}</Typography>
+			</Box>
+		</Box>
 	}
 
 	const onCreateNewFindingClick = () => {
@@ -409,89 +378,99 @@ const FindingsOverview: React.FC<IProps> = () => {
 					return finding ? <Box
 						display="flex"
 						key={index}
-						flexDirection="column"
-						alignItems="flex-start"
-						justifyContent="center"
+						flexDirection="row"
+						alignItems="center"
+						justifyContent="space-between"
 						width="100%"
 						border={"1px solid rgba(0, 0, 0, 0.23)"}
 						borderRadius={11}
 						bgcolor="#FFF"
-						p={1}
-						pb={2}
 						mb={2}
 					>
-						<Box
+						<ButtonBase className={classes.buttonBase} onClick={() => onEditClick(finding._id)}>
+							<Box
+								display="flex"
+								flexGrow={1}
+								flexDirection="column"
+								alignItems="center"
+								justifyContent="center"
+								width="100%"
+							>
+								<Box
+									display="flex"
+									flexDirection="row"
+									alignItems="center"
+									justifyContent="space-between"
+									width="100%"
+								>
+									<Box
+										display="flex"
+										flexDirection="row"
+										alignItems="center"
+										justifyContent="flex-start"
+										flexGrow={1}
+									>
+										{finding.type === 'bug' && <Box
+											display="flex"
+											flexDirection="row"
+											alignItems="center"
+											justifyContent="flex-start"
+										>
+											<BugReportIcon />
+										</Box>}
+										{finding.type === 'verbetering' && <Box
+											display="flex"
+											flexDirection="row"
+											alignItems="center"
+											justifyContent="flex-start"
+										>
+											<MailOutlineIcon />
+										</Box>}
+										<Box
+											display="flex"
+											flexDirection="row"
+											alignItems="center"
+											justifyContent="flex-start"
+											ml={1}
+										>
+											<Chip variant="outlined" color="primary" label={finding.status} size="small" />
+										</Box>
+										<Box
+											display="flex"
+											flexDirection="row"
+											alignItems="center"
+											justifyContent="flex-start"
+											ml={1}
+										>
+											<Typography variant="caption">{finding.testDate ? format(finding.testDate, 'Pp', { locale: nl }) : ""}</Typography>
+										</Box>
+										{finding.userEmail && <Box
+											display="flex"
+											flexDirection="row"
+											alignItems="center"
+											justifyContent="flex-start"
+											ml={1}
+										>
+											<Typography variant="caption"> - {finding.userEmail}</Typography>
+										</Box>}
+									</Box>
+								</Box>
+								{FindingComponent(finding)}
+							</Box>
+						</ButtonBase>
+						{finding._id && <Box
 							display="flex"
 							flexDirection="row"
 							alignItems="center"
-							justifyContent="space-between"
-							width="100%"
+							justifyContent="flex-end"
 						>
-							<Box
-								display="flex"
-								flexDirection="row"
-								alignItems="center"
-								justifyContent="flex-start"
-							>
-								{finding.type === 'bug' && <Box
-									display="flex"
-									flexDirection="row"
-									alignItems="center"
-									justifyContent="flex-start"
-								>
-									<BugReportIcon />
-								</Box>}
-								{finding.type === 'verbetering' && <Box
-									display="flex"
-									flexDirection="row"
-									alignItems="center"
-									justifyContent="flex-start"
-								>
-									<MailOutlineIcon />
-								</Box>}
-								<Box
-									display="flex"
-									flexDirection="row"
-									alignItems="center"
-									justifyContent="flex-start"
-									ml={1}
-								>
-									<Chip variant="outlined" color="primary" label={finding.status} size="small" />
-								</Box>
-								<Box
-									display="flex"
-									flexDirection="row"
-									alignItems="center"
-									justifyContent="flex-start"
-									ml={1}
-								>
-									<Typography variant="caption">{finding.testDate ? format(finding.testDate, 'Pp', { locale: nl }) : ""}</Typography>
-								</Box>
-								{finding.userEmail && <Box
-									display="flex"
-									flexDirection="row"
-									alignItems="center"
-									justifyContent="flex-start"
-									ml={1}
-								>
-									<Typography variant="caption"> - {finding.userEmail}</Typography>
-								</Box>}
-							</Box>
-							{finding._id && <Box
-								display="flex"
-								flexDirection="row"
-								alignItems="center"
-								justifyContent="flex-end"
-							>
-								<IconButton aria-label="delete" className={classes.margin} color="primary" onClick={() => onEditClick(finding._id)}>
-									<EditIcon />
-								</IconButton>
-								<IconButton aria-label="archive" className={classes.margin} color="secondary" onClick={() => onArchiveClick(finding)}>
-									<ArchiveIcon />
-								</IconButton>
+							{finding.theme && <Box ml={2}>
+								<Chip label={finding.theme} size="small" />
 							</Box>}
-						</Box>
-						{FindingComponent(finding)}
+							<IconButton aria-label="archive" className={classes.margin} color="secondary" onClick={() => onArchiveClick(finding)}>
+								<ArchiveIcon />
+							</IconButton>
+						</Box>}
 					</Box> : null
 				})}
 			</Box>
