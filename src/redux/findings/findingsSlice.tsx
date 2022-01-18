@@ -46,6 +46,7 @@ export const {
 	set,
 	addFinding,
 	deleteFinding,
+	updateFinding,
 } = findingsData.actions
 
 export default findingsData.reducer

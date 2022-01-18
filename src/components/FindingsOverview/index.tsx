@@ -28,6 +28,9 @@ import { format } from 'date-fns'
 import { nl } from 'date-fns/locale'
 import { set } from '../../redux/findings/findingsSlice'
 import { useAppSelector, useAppDispatch } from '../../hooks'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../redux/store'
+import { setFindingsOverview } from '../../redux/currentTabPosition/currentTabPositionSlice'
 
 const useStyles: any = makeStyles(() => ({
 	button: {
@@ -62,7 +65,7 @@ const FindingsOverview: React.FC<IProps> = () => {
 	const [findingThemes, setFindingThemes] = useState<FindingTheme[]>([])
 	const findingsDataState = useAppSelector(state => state.findingsData)
 	const { findings } = findingsDataState
-	const [currentTab, setCurrentTab] = React.useState(0);
+	const currentTab = useSelector((state: RootState) => state.currentTabPosition.findingsOverview)
 	const [userEmails, setUserEmails] = useState<string[]>([])
 
 	const getData = async () => {
@@ -248,7 +251,7 @@ const FindingsOverview: React.FC<IProps> = () => {
 	}
 
 	const handleChangeTab = (event: React.ChangeEvent<{}>, newValue: number) => {
-		setCurrentTab(newValue)
+		dispatch(setFindingsOverview(newValue))
 	}
 
 	return (

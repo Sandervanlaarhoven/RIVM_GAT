@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 
 import { useRealmApp } from '../../App/RealmApp'
-import { addFinding, deleteFinding } from '../../../redux/findings/findingsSlice'
+import { addFinding, deleteFinding, updateFinding } from '../../../redux/findings/findingsSlice'
 import { useDispatch } from 'react-redux'
 
 
@@ -49,7 +49,3 @@ const CollectionWatches = () => {
 }
 
 export default CollectionWatches
-function updateFinding(fullDocument: any): any {
-	throw new Error('Function not implemented.')
-}
-
